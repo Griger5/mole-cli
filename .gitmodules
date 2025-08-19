@@ -1,0 +1,3 @@
+[submodule "external/rttg"]
+	path = external/rttg
+	url = git@github.com:AlexKiryushkin/rttg.git
