@@ -7,6 +7,7 @@ add_library(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE "include")
+target_include_directories(${PROJECT_NAME} PRIVATE "external/rttg/include")
 
 include(GNUInstallDirs)
 
