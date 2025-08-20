@@ -1,3 +1,6 @@
 [submodule "external/rttg"]
 	path = external/rttg
 	url = git@github.com:AlexKiryushkin/rttg.git
+[submodule "external/isocline"]
+	path = external/isocline
+	url = git@github.com:daanx/isocline.git

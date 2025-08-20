@@ -8,6 +8,9 @@ add_library(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PRIVATE "include")
 target_include_directories(${PROJECT_NAME} PRIVATE "external/rttg/include")
+target_include_directories(${PROJECT_NAME} PRIVATE "external/isocline/include")
+
+target_sources(${PROJECT_NAME} PRIVATE "external/isocline/src/isocline.c")
 
 include(GNUInstallDirs)
 

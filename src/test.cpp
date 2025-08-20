@@ -1,9 +1,11 @@
 #include "cli-brary/test.hpp"
 
 #include "rttg/rttg.h"
+#include "isocline.h"
 
 #include <iostream>
 #include <string>
+#include <cstring>
 
 void test() {
     std::cout << "Hello!\n";
@@ -15,4 +17,16 @@ void test() {
     }
 
     std::cout << std::endl;
+
+    char* input;
+    while((input = ic_readline("isoclinε")) != NULL)    // ctrl-d returns NULL (as well as errors)
+    {
+        bool stop = (strcmp(input,"exit") == 0 || strcmp(input,"") == 0); 
+        ic_printf("[gray]-----[/]\n"           // echo the input
+                "%s\n"
+                "[gray]-----[/]\n", input );    
+        free(input);               // do not forget to free the returned input!
+        if (stop) break;
+    }
+    ic_println("done");
 }
