@@ -4,6 +4,8 @@ project(cli-brary VERSION 0.0.1)
 
 add_library(${PROJECT_NAME}
     "src/test.cpp"
+    "src/cli.cpp"
+    "src/command.cpp"
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE "include")
