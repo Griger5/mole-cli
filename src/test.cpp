@@ -1,4 +1,4 @@
-#include "cli-brary/test.hpp"
+#include "molecli/test.hpp"
 
 #include "rttg/rttg.h"
 #include "isocline.h"

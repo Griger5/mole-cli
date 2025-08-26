@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(cli-brary VERSION 0.0.1)
+project(molecli VERSION 0.0.1)
 
 add_library(${PROJECT_NAME}
     "src/test.cpp"

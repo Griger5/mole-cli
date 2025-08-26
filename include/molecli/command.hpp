@@ -1,14 +1,14 @@
-#ifndef CLI_BRARY_COMMAND_HPP
-#define CLI_BRARY_COMMAND_HPP
+#ifndef MOLECLI_COMMAND_HPP
+#define MOLECLI_COMMAND_HPP
 
-#include "typing_util.hpp"
+#include "typing_utils.hpp"
 
 #include <functional>
 #include <memory>
 #include <vector>
 #include <tuple>
 
-namespace talpasoft {
+namespace molecli {
 
 namespace detail {
 
@@ -33,6 +33,6 @@ public:
     }
 };
 
-} // talpasoft
+} // molecli
 
-#endif // CLI_BRARY_COMMAND_HPP
+#endif // MOLECLI_COMMAND_HPP

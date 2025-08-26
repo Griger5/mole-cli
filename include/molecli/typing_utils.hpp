@@ -1,11 +1,11 @@
-#ifndef CLI_BRARY_TYPING_UTIL_HPP
-#define CLI_BRARY_TYPING_UTIL_HPP
+#ifndef MOLECLI_TYPING_UTIL_HPP
+#define MOLECLI_TYPING_UTIL_HPP
 
 #include <functional>
 #include <memory>
 #include <vector>
 
-namespace talpasoft::detail {
+namespace molecli::detail {
 
 enum class arg_type {
     Bool = 0,
@@ -42,6 +42,6 @@ constexpr arg_type get_type() {
     }
 }
 
-} // talpasoft::detail
+} // molecli::detail
 
-#endif // CLI_BRARY_TYPING_UTIL_HPP
+#endif // MOLECLI_TYPING_UTIL_HPP

@@ -1,12 +1,12 @@
-#ifndef CLI_BRARY_CLI_HPP
-#define CLI_BRARY_CLI_HPP
+#ifndef MOLECLI_CLI_HPP
+#define MOLECLI_CLI_HPP
 
 #include "command.hpp"
 
 #include <map>
 #include <string>
 
-namespace talpasoft {
+namespace molecli {
 
 class CLI final {
 private:
@@ -18,6 +18,6 @@ public:
     void add_command(std::string command_name, std::string description, std::function<void(detail::BaseArgs *)> func, std::vector<detail::arg_type> type_vec);
 };
 
-} // talpasoft
+} // molecli
 
-#endif // CLI_BRARY_CLI_HPP
+#endif // MOLECLI_CLI_HPP
