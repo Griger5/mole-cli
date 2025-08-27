@@ -1,1 +1,2 @@
 build/
+include/molecli/generated_command_macros.hpp
