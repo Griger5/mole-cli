@@ -82,9 +82,28 @@ bool cast<double>(std::string &&token, void *output) {
     }
     else {
         double *output_double = static_cast<double *>(output);
-        *output_double = std::stof(token);
+        *output_double = std::stod(token);
         return true;
     }
+}
+
+template <>
+bool cast<char>(std::string &&token, void *output) {
+    if (token.length() != 1) {
+        return false;
+    }
+    else {
+        char *output_char = static_cast<char *>(output);
+        *output_char = *(token.c_str());
+        return true;
+    }
+}
+
+template <>
+bool cast<std::string>(std::string &&token, void *output) {
+    std::string *output_string = static_cast<std::string *>(output);
+    *output_string = token;
+    return true;
 }
 
 } // molecli::detail
