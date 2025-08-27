@@ -8,31 +8,27 @@
 #include <vector>
 #include <tuple>
 
-namespace molecli {
-
-namespace detail {
+namespace molecli::detail {
 
 struct BaseArgs {virtual ~BaseArgs() = default;};
 
-}
-
 class Command final {
 private:
-    std::function<void(detail::BaseArgs *)> func;
-    std::unique_ptr<detail::BaseArgs> args;
+    std::function<void(BaseArgs *)> func;
+    std::unique_ptr<BaseArgs> args;
     size_t arg_count;
-    std::vector<detail::arg_type> arg_types;
+    std::vector<arg_type> arg_types;
 
 public:
     Command() = default;
 
-    Command(std::function<void(detail::BaseArgs *)> f, std::vector<detail::arg_type> v) {
+    Command(std::function<void(BaseArgs *)> f, std::vector<arg_type> v) {
         this->func = f;
         this->arg_types = v;
         this->arg_count = v.size();
     }
 };
 
-} // molecli
+} // molecli::detail
 
 #endif // MOLECLI_COMMAND_HPP

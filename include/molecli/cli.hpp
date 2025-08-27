@@ -10,7 +10,7 @@ namespace molecli {
 
 class CLI final {
 private:
-    std::map<std::string, Command> commands;
+    std::map<std::string, detail::Command> commands;
 
 public:
     CLI() {}
