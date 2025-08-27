@@ -7,10 +7,27 @@
 namespace molecli::detail {
 
 template <typename T>
-void cast(std::string &&token, void *output, bool &is_err) {}
+bool cast(std::string &&token, void *output) {return false;}
 
 template <>
-void cast<int>(std::string &&token, void *output, bool &is_err) {
+bool cast<bool>(std::string &&token, void *output) {
+    if (!token.compare("0") || !token.compare("false") || !token.compare("FALSE")) {
+        bool *output_bool = static_cast<bool *>(output);
+        *output_bool = false;
+        return true;
+    }
+    else if (!token.compare("1") || !token.compare("true") || !token.compare("TRUE")) {
+        bool *output_bool = static_cast<bool *>(output);
+        *output_bool = true;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+template <>
+bool cast<int>(std::string &&token, void *output) {
     std::string copy = token;
 
     if (copy.at(0) == '-') {
@@ -20,10 +37,10 @@ void cast<int>(std::string &&token, void *output, bool &is_err) {
     if (copy.find_first_not_of("0123456789") == std::string::npos) {
         int *output_int = static_cast<int *>(output);
         *output_int = std::stoi(token);
-        is_err = false;
+        return true;
     }
     else {
-        is_err = true;
+        return false;
     }
 }
 
