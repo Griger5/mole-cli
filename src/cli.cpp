@@ -2,8 +2,8 @@
 
 namespace molecli {
 
-void CLI::add_command(std::string command_name, std::string description, std::function<void(detail::BaseArgs *)> func, std::vector<detail::arg_type> type_vec) {
-    this->commands[command_name] = detail::Command{func, type_vec};
+void CLI::add_command(std::string &&command_name, std::string &&description, detail::Command &&cmd) {
+    this->commands[command_name] = std::move(cmd);
 }
 
 } // talpasoft

@@ -15,7 +15,7 @@ private:
 public:
     CLI() {}
 
-    void add_command(std::string command_name, std::string description, std::function<void(detail::BaseArgs *)> func, std::vector<detail::arg_type> type_vec);
+    void add_command(std::string &&command_name, std::string &&description, detail::Command &&cmd);
 };
 
 } // molecli
