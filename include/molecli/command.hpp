@@ -10,22 +10,24 @@
 
 namespace molecli::detail {
 
-struct BaseArgs {virtual ~BaseArgs() = default;};
+using Args = std::vector<void *>;
+using Caster = std::function<bool(std::string &&, void *)>;
 
 class Command final {
 private:
-    std::function<void(BaseArgs *)> func;
-    std::unique_ptr<BaseArgs> args;
-    size_t arg_count;
-    std::vector<arg_type> arg_types;
+    std::function<void(const Args &)> func;
+    Args args;
+    std::vector<Caster> casters;
+    std::function<void(Args &)> dealloc_args;
 
 public:
     Command() = default;
 
-    Command(std::function<void(BaseArgs *)> f, std::vector<arg_type> v) {
-        this->func = f;
-        this->arg_types = v;
-        this->arg_count = v.size();
+    Command(std::function<void(const Args &)> &&func, Args &&args, std::vector<Caster> &&casts, std::function<void(Args &)> &&dealloc) {
+        this->func = func;
+        this->args = args;
+        this->casters = casts;
+        this->dealloc_args = dealloc;
     }
 };
 
