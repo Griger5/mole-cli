@@ -14,13 +14,15 @@ if(NOT MAX_COMMAND_ARGS)
 endif()
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
+
 execute_process(COMMAND ${Python3_EXECUTABLE} scripts/generate_command_macros.py ${MAX_COMMAND_ARGS})
+execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copytree('external/isocline/src/', 'include/molecli/external/isocline', dirs_exist_ok=True)")
 
 include(GNUInstallDirs)
 
 target_include_directories(
     ${PROJECT_NAME} INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include;${CMAKE_CURRENT_SOURCE_DIR}/external/isocline/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
