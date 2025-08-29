@@ -3,6 +3,8 @@
 
 #include "command.hpp"
 
+#include "external/isocline/src/isocline.c"
+
 #include <map>
 #include <string>
 
@@ -13,7 +15,7 @@ private:
     std::map<std::string, detail::Command> commands;
 
 public:
-    CLI() {}
+    CLI() = default;
 
     void add_command(std::string &&command_name, std::string &&description, detail::Command &&cmd) {
         this->commands[command_name] = std::move(cmd);

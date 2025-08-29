@@ -4,9 +4,6 @@ project(molecli VERSION 0.0.1)
 
 add_library(${PROJECT_NAME} INTERFACE)
 
-# target_include_directories(${PROJECT_NAME} INTERFACE "include")
-# target_include_directories(${PROJECT_NAME} INTERFACE "external/isocline/include")
-
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 
 if(NOT MAX_COMMAND_ARGS)
@@ -16,7 +13,8 @@ endif()
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 execute_process(COMMAND ${Python3_EXECUTABLE} scripts/generate_command_macros.py ${MAX_COMMAND_ARGS})
-execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copytree('external/isocline/src/', 'include/molecli/external/isocline', dirs_exist_ok=True)")
+execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copytree('external/isocline/src/', 'include/molecli/external/isocline/src/', dirs_exist_ok=True)")
+execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copytree('external/isocline/include/', 'include/molecli/external/isocline/include/', dirs_exist_ok=True)")
 
 include(GNUInstallDirs)
 
