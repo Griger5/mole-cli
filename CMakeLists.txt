@@ -14,6 +14,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE "external/isocline/include")
 
 target_sources(${PROJECT_NAME} PRIVATE "external/isocline/src/isocline.c")
 
+if(NOT MAX_COMMAND_ARGS)
+    set(MAX_COMMAND_ARGS 10)
+endif()
+
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+execute_process(COMMAND ${Python3_EXECUTABLE} scripts/generate_command_macros.py ${MAX_COMMAND_ARGS})
+
 include(GNUInstallDirs)
 
 target_include_directories(

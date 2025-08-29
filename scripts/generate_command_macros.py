@@ -1,13 +1,16 @@
 from pathlib import Path
+import sys
 
 output_path = Path(__file__).parent / "../include/molecli/generated_command_macros.hpp"
+
+max_commands = int(sys.argv[1]) + 1
 
 with open(output_path, "w+") as f:
     f.write("#ifndef MOLECLI_GENERATED_COMMAND_MACROS_HPP\n#define MOLECLI_GENERATED_COMMAND_MACROS_HPP\n")
 
     f.write("#include \"cli.hpp\"\n#include \"command.hpp\"\n#include \"caster.hpp\"\n\n")
 
-    for i in range(1, 10):
+    for i in range(1, max_commands):
         f.write(f"#define ADD_COMMAND_{i}(cli_obj, command_name, desc, func")
 
         for j in range(i):
