@@ -2,16 +2,12 @@ cmake_minimum_required(VERSION 3.28)
 
 project(molecli VERSION 0.0.1)
 
-add_library(${PROJECT_NAME}
-    "src/test.cpp"
-    "src/cli.cpp"
-    "src/command.cpp"
-)
+add_library(${PROJECT_NAME} INTERFACE)
 
-target_include_directories(${PROJECT_NAME} PRIVATE "include")
-target_include_directories(${PROJECT_NAME} PRIVATE "external/isocline/include")
+# target_include_directories(${PROJECT_NAME} INTERFACE "include")
+# target_include_directories(${PROJECT_NAME} INTERFACE "external/isocline/include")
 
-target_sources(${PROJECT_NAME} PRIVATE "external/isocline/src/isocline.c")
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 
 if(NOT MAX_COMMAND_ARGS)
     set(MAX_COMMAND_ARGS 10)
@@ -23,12 +19,10 @@ execute_process(COMMAND ${Python3_EXECUTABLE} scripts/generate_command_macros.py
 include(GNUInstallDirs)
 
 target_include_directories(
-    ${PROJECT_NAME} PUBLIC 
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    ${PROJECT_NAME} INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include;${CMAKE_CURRENT_SOURCE_DIR}/external/isocline/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 install(TARGETS ${PROJECT_NAME}
         EXPORT ${PROJECT_NAME}_Targets
