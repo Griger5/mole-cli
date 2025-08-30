@@ -4,6 +4,7 @@
 #include <tuple>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 namespace molecli::detail {
 
@@ -17,11 +18,11 @@ std::tuple<std::string, std::vector<std::string>> tokenize(std::string &&line) {
 
     std::getline(str_stream, command_name, ' ');
 
-    std::getline(str_stream, temp, ' ');
-
-    while (!temp.empty()) {
+    while (std::getline(str_stream, temp, ' ')) {
+        if (temp == "") {
+            break;
+        }
         arguments.push_back(temp);
-        std::getline(str_stream, temp, ' ');
     }
 
     return std::make_tuple(command_name, arguments);
