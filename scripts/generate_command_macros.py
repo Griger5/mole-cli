@@ -43,6 +43,12 @@ with open(output_path, "w+") as f:
         f.write("[](Args &args){")
         for j in range(i):
             f.write(f"delete static_cast<type{j+1} *>(args[{j}]);")
+        f.write("},\\\n")
+
+        f.write("std::vector<std::string>{")
+        f.write("#type1")
+        for j in range(1, i):
+            f.write(f", #type{j+1}")
         f.write("}\\\n")
 
         f.write("});\\\n")
