@@ -15,6 +15,12 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter)
 execute_process(COMMAND ${Python3_EXECUTABLE} scripts/generate_command_macros.py ${MAX_COMMAND_ARGS})
 execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copytree('external/isocline/src/', 'include/molecli/external/isocline/src/', dirs_exist_ok=True)")
 execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copytree('external/isocline/include/', 'include/molecli/external/isocline/include/', dirs_exist_ok=True)")
+execute_process(
+    COMMAND ${Python3_EXECUTABLE} "-c" "import sys; print(''.join([line if not 'setlocale' in line else '  const char* loc = setlocale(LC_ALL,\"C\");' for line in sys.stdin]))"
+    INPUT_FILE ${CMAKE_SOURCE_DIR}/include/molecli/external/isocline/src/tty.c
+    OUTPUT_FILE ${CMAKE_SOURCE_DIR}/include/molecli/external/isocline/src/tty2.c
+)
+execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import os; os.remove('include/molecli/external/isocline/src/tty.c'); os.rename('include/molecli/external/isocline/src/tty2.c', 'include/molecli/external/isocline/src/tty.c')")
 
 include(GNUInstallDirs)
 
