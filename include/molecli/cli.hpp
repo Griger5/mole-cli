@@ -21,6 +21,12 @@ public:
 
     CLI(const std::string &p) : prompt{p} {}
 
+    ~CLI() {
+        for (auto [name, cmd] : this->commands) {
+            cmd.dealloc();
+        }
+    }
+
     void add_command(std::string &&command_name, std::string &&description, detail::Command &&cmd) {
         this->commands[command_name] = std::move(cmd);
     }
