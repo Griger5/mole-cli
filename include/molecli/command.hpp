@@ -22,6 +22,15 @@ private:
     std::vector<std::string> type_names;
 
 public:
+    enum status_code {NO_ERROR = 0, INSUFFICIENT_COUNT = 1, TOO_MANY_ARGS = 2, WRONG_TYPE = 3};
+
+    struct Status {
+        status_code code;
+        std::size_t error_idx;
+        std::size_t arg_count;
+        std::string type_name;
+    };
+
     Command() = default;
 
     Command(std::function<void(const Args &)> &&func, Args &&args, std::vector<Caster> &&casts, std::function<void(Args &)> &&dealloc, std::vector<std::string> &&names) {
@@ -30,6 +39,29 @@ public:
         this->casters = std::move(casts);
         this->dealloc_args = std::move(dealloc);
         this->type_names = std::move(names);
+    }
+
+    Status load_arguments(std::vector<std::string> tokens) {
+        std::size_t i = 0;
+        bool cast_success;
+
+        for (auto &&token : tokens) {
+            if (i >= this->args.size()) {
+                return Status{TOO_MANY_ARGS, i, this->args.size(), ""};
+            }
+            else if (!this->casters[i](std::move(token), this->args[i])) {
+                return Status{WRONG_TYPE, i, this->args.size(), this->type_names[i]};
+            }
+
+            i++;
+        }
+
+        if (i < this->args.size()) {
+            return Status{INSUFFICIENT_COUNT, i, this->args.size(), ""};
+        }
+        else {
+            return Status{NO_ERROR, 0, 0, ""};
+        }
     }
 };
 
