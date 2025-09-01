@@ -41,6 +41,10 @@ public:
         this->type_names = std::move(names);
     }
 
+    void dealloc() {
+        this->dealloc_args(this->args);
+    }
+
     Status load_arguments(std::vector<std::string> tokens) {
         std::size_t i = 0;
         bool cast_success;
@@ -62,6 +66,10 @@ public:
         else {
             return Status{NO_ERROR, 0, 0, ""};
         }
+    }
+
+    void execute() {
+        this->func(this->args);
     }
 };
 
