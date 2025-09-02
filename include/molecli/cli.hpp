@@ -75,7 +75,7 @@ public:
     
         add_command_impl<sizeof...(ArgTypes), ArgTypes...>(arg_vec, caster_vec, dealloc_vec, type_names_vec);
 
-        std::function<void(const Args &)> func_wrapper = [&](const std::vector<void*> &v) {
+        std::function<void(const Args &)> func_wrapper = [=](const std::vector<void*> &v) {
             std::tuple<ArgTypes...> t;
             vector_set_tuple<sizeof...(ArgTypes)>(t, v);
 
