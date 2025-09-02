@@ -4,6 +4,7 @@
 #include "command.hpp"
 #include "tokenize.hpp"
 #include "caster.hpp"
+#include "help_message.hpp"
 
 #include "external/isocline/src/isocline.c"
 
@@ -22,6 +23,7 @@ class CLI final {
 private:
     const std::string prompt;
     std::map<std::string, detail::Command> commands;
+    std::map<std::string, detail::HelpMessage> help_messages;
 
     template <std::size_t Idx, typename First = void, typename... Rest>
     void add_command_impl(Args &arg_vec, std::vector<Caster> &caster_vec, std::vector<DeallocFunc> &dealloc_vec, std::vector<std::string> &type_names_vec) {
@@ -32,7 +34,13 @@ private:
 
             int status = -1;
             char *name = abi::__cxa_demangle(typeid(First).name(), 0, 0, &status);
-            type_names_vec.push_back(std::string{name});
+            std::string name_str{name};
+            if (name_str == "std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >") {
+                type_names_vec.push_back("std::string");
+            }
+            else {
+                type_names_vec.push_back(name_str);
+            }
             free(name);
             
             add_command_impl<Idx - 1, Rest...>(arg_vec, caster_vec, dealloc_vec, type_names_vec);
@@ -74,6 +82,7 @@ public:
             std::apply(func, t);
         };
 
+        this->help_messages[command_name] = detail::HelpMessage{std::move(command_name), std::move(description), std::move(type_names_vec)};
         this->commands[command_name] = detail::Command{std::move(func_wrapper), std::move(arg_vec), std::move(caster_vec), std::move(dealloc_vec), std::move(type_names_vec)};
     }
 
@@ -111,6 +120,16 @@ public:
             }
             else if (command_name == "exit" || command_name == "EXIT") {
                 break;
+            }
+            else if (command_name == "help" || command_name == "HELP") {
+                stream << "AVAILABLE COMMANDS:\n";
+    
+                for (auto &[name, msg] : this->help_messages) {
+                    stream << msg;
+                }
+
+                stream << "\033[36mhelp\033[39m()/\033[36mHELP\033[39m()\n    Lists all available commands\n--------------------\n";
+                stream << "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exists the current CLI\n--------------------\n";
             }
             else {
                 stream << "Unknown command. Maybe try using \"help\"?\n";
