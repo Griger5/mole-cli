@@ -54,7 +54,7 @@ public:
 
         for (auto &&token : tokens) {
             if (i >= this->args.size()) {
-                return Status{TOO_MANY_ARGS, i, this->args.size(), ""};
+                return Status{TOO_MANY_ARGS, i+1, this->args.size(), ""};
             }
             else if (!this->casters[i](std::move(token), this->args[i])) {
                 return Status{WRONG_TYPE, i, this->args.size(), this->type_names[i]};

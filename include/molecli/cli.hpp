@@ -12,8 +12,6 @@
 #include <vector>
 #include <cxxabi.h>
 
-#define MACRO_STRINGIFY(x) #x
-
 namespace molecli {
 
 using Args = std::vector<void *>;
@@ -79,7 +77,7 @@ public:
         this->commands[command_name] = detail::Command{std::move(func_wrapper), std::move(arg_vec), std::move(caster_vec), std::move(dealloc_vec), std::move(type_names_vec)};
     }
 
-    void run_loop() {
+    void run_loop(std::ostream &stream = std::cout) {
         char *temp;
         ic_set_history(NULL, -1);
 
@@ -96,12 +94,26 @@ public:
             else if (this->commands.find(command_name) != this->commands.end()) {
                 detail::Command::Status status = this->commands[command_name].load_arguments(arguments);
 
-                if (status.code == detail::Command::NO_ERROR) {
-                    this->commands[command_name].execute();
+                switch(status.code) {
+                    case detail::Command::NO_ERROR:
+                        this->commands[command_name].execute();
+                        break;
+                    case detail::Command::INSUFFICIENT_COUNT:
+                        stream << "Warning: Insufficient number of arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
+                        break;
+                    case detail::Command::TOO_MANY_ARGS:
+                        stream << "Warning: Too many arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
+                        break;
+                    case detail::Command::WRONG_TYPE:
+                        stream << "Warning: Wrong type of argument #" << status.error_idx + 1 << ". Argument type should be: " << status.type_name << '\n';
+                        break;
                 }
             }
             else if (command_name == "exit" || command_name == "EXIT") {
                 break;
+            }
+            else {
+                stream << "Unknown command. Maybe try using \"help\"?\n";
             }
         }
     }
