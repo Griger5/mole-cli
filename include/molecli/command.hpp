@@ -12,13 +12,14 @@ namespace molecli::detail {
 
 using Args = std::vector<void *>;
 using Caster = std::function<bool(std::string &&, void *)>;
+using DeallocFunc = std::function<void(Args &, const std::size_t &)>;
 
 class Command final {
 private:
     std::function<void(const Args &)> func;
     Args args;
     std::vector<Caster> casters;
-    std::function<void(Args &)> dealloc_args;
+    std::vector<DeallocFunc> dealloc_args;
     std::vector<std::string> type_names;
 
 public:
@@ -33,7 +34,7 @@ public:
 
     Command() = default;
 
-    Command(std::function<void(const Args &)> &&func, Args &&args, std::vector<Caster> &&casts, std::function<void(Args &)> &&dealloc, std::vector<std::string> &&names) {
+    Command(std::function<void(const Args &)> &&func, Args &&args, std::vector<Caster> &&casts, std::vector<DeallocFunc> &&dealloc, std::vector<std::string> &&names) {
         this->func = std::move(func);
         this->args = std::move(args);
         this->casters = std::move(casts);
@@ -42,7 +43,9 @@ public:
     }
 
     void dealloc() {
-        this->dealloc_args(this->args);
+        for (std::size_t i = 0; i < this->args.size(); i++) {
+            this->dealloc_args[i](this->args, i);
+        }
     }
 
     Status load_arguments(std::vector<std::string> tokens) {
