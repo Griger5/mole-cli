@@ -12,7 +12,6 @@ endif()
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
-execute_process(COMMAND ${Python3_EXECUTABLE} scripts/generate_command_macros.py ${MAX_COMMAND_ARGS})
 execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copytree('external/isocline/src/', 'include/molecli/external/isocline/src/', dirs_exist_ok=True)")
 execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copytree('external/isocline/include/', 'include/molecli/external/isocline/include/', dirs_exist_ok=True)")
 execute_process(
