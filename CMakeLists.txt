@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(molecli VERSION 0.0.1)
+project(molecli VERSION 0.5.0)
 
 add_library(${PROJECT_NAME} INTERFACE)
 

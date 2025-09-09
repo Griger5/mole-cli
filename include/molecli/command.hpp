@@ -14,8 +14,8 @@ using Args = std::vector<void *>;
 using Caster = std::function<bool(std::string &&, void *)>;
 using DeallocFunc = std::function<void(Args &, const std::size_t &)>;
 
-class Command final {
-private:
+class Command {
+protected:
     std::function<void(const Args &)> func;
     Args args;
     std::vector<Caster> casters;

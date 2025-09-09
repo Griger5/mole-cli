@@ -2,15 +2,18 @@
 #define MOLECLI_CLI_HPP
 
 #include "command.hpp"
+#include "command_s.hpp"
 #include "tokenize.hpp"
 #include "caster.hpp"
 #include "help_message.hpp"
+#include "static_vars.hpp"
 
 #include "external/isocline/src/isocline.c"
 
 #include <map>
 #include <string>
 #include <vector>
+#include <tuple>
 #include <cxxabi.h>
 
 namespace molecli {
@@ -19,11 +22,17 @@ using Args = std::vector<void *>;
 using Caster = std::function<bool(std::string &&, void *)>;
 using DeallocFunc = std::function<void(Args &, const std::size_t &)>;
 
+template <typename... StaticTypes>
 class CLI final {
+public:
+    using StaticVarsT = detail::StaticVars<StaticTypes...>;
+
 private:
     const std::string prompt;
     std::map<std::string, detail::Command> commands;
     std::map<std::string, detail::HelpMessage> help_messages;
+    std::map<std::string, detail::Command_s<StaticTypes...>> static_commands;
+    std::shared_ptr<StaticVarsT> static_vars;
 
     template <std::size_t Idx, typename First = void, typename... Rest>
     void add_command_impl(Args &arg_vec, std::vector<Caster> &caster_vec, std::vector<DeallocFunc> &dealloc_vec, std::vector<std::string> &type_names_vec) {
@@ -56,12 +65,18 @@ private:
     }
 
 public:
-    CLI() : prompt{""} {}
+    CLI() : prompt{""} {
+        static_vars = std::make_shared<StaticVarsT>();
+    }
 
     CLI(const std::string &p) : prompt{p} {}
 
     ~CLI() {
         for (auto [name, cmd] : this->commands) {
+            cmd.dealloc();
+        }
+
+        for (auto [name, cmd] : this->static_commands) {
             cmd.dealloc();
         }
     }
@@ -73,17 +88,41 @@ public:
         std::vector<DeallocFunc> dealloc_vec;
         std::vector<std::string> type_names_vec;
     
-        add_command_impl<sizeof...(ArgTypes), ArgTypes...>(arg_vec, caster_vec, dealloc_vec, type_names_vec);
+        this->add_command_impl<sizeof...(ArgTypes), ArgTypes...>(arg_vec, caster_vec, dealloc_vec, type_names_vec);
 
-        std::function<void(const Args &)> func_wrapper = [=](const std::vector<void*> &v) {
+        std::function<void(const Args &)> func_wrapper = [=](const Args &v) {
             std::tuple<ArgTypes...> t;
-            vector_set_tuple<sizeof...(ArgTypes)>(t, v);
+            this->vector_set_tuple<sizeof...(ArgTypes)>(t, v);
 
             std::apply(func, t);
         };
 
         this->help_messages[command_name] = detail::HelpMessage{std::move(command_name), std::move(description), std::move(type_names_vec)};
         this->commands[command_name] = detail::Command{std::move(func_wrapper), std::move(arg_vec), std::move(caster_vec), std::move(dealloc_vec), std::move(type_names_vec)};
+    }
+
+    template <typename ReturnType, typename... ArgTypes>
+    void add_command_s(std::string &&command_name, std::string &&description, std::function<ReturnType(std::shared_ptr<StaticVarsT>, ArgTypes...)> func) {
+        Args arg_vec;
+        std::vector<Caster> caster_vec;
+        std::vector<DeallocFunc> dealloc_vec;
+        std::vector<std::string> type_names_vec;
+
+        type_names_vec.push_back("StaticVars");
+    
+        this->add_command_impl<sizeof...(ArgTypes), ArgTypes...>(arg_vec, caster_vec, dealloc_vec, type_names_vec);
+
+        std::function<void(std::shared_ptr<StaticVarsT>, const Args &)> func_wrapper = [=](std::shared_ptr<StaticVarsT> s, const Args &v) {
+            std::tuple<ArgTypes...> t;
+
+            this->vector_set_tuple<sizeof...(ArgTypes)>(t, v);
+
+            auto t2 = std::tuple_cat(std::make_tuple(s), t);
+            std::apply(func, t2);
+        };
+
+        this->help_messages[command_name] = detail::HelpMessage{std::move(command_name), std::move(description), std::move(type_names_vec)};
+        this->static_commands[command_name] = detail::Command_s{std::move(func_wrapper), std::move(arg_vec), std::move(caster_vec), std::move(dealloc_vec), std::move(type_names_vec)};
     }
 
     void run_loop(std::ostream &stream = std::cout) {
@@ -106,6 +145,24 @@ public:
                 switch(status.code) {
                     case detail::Command::NO_ERROR:
                         this->commands[command_name].execute();
+                        break;
+                    case detail::Command::INSUFFICIENT_COUNT:
+                        stream << "Warning: Insufficient number of arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
+                        break;
+                    case detail::Command::TOO_MANY_ARGS:
+                        stream << "Warning: Too many arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
+                        break;
+                    case detail::Command::WRONG_TYPE:
+                        stream << "Warning: Wrong type of argument #" << status.error_idx + 1 << ". Argument type should be: " << status.type_name << '\n';
+                        break;
+                }
+            }
+            else if (this->static_commands.find(command_name) != this->static_commands.end()) {
+                detail::Command::Status status = this->static_commands[command_name].load_arguments(arguments);
+
+                switch(status.code) {
+                    case detail::Command::NO_ERROR:
+                        this->static_commands[command_name].execute(this->static_vars);
                         break;
                     case detail::Command::INSUFFICIENT_COUNT:
                         stream << "Warning: Insufficient number of arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
