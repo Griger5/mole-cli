@@ -76,6 +76,7 @@ enable_testing()
 
 add_executable(molecli_tests
     "tests/test_tokenize.cpp"
+    "tests/test_caster.cpp"
 )
 
 target_compile_features(molecli_tests PUBLIC cxx_std_17)
