@@ -8,7 +8,9 @@
 namespace molecli::detail {
 
 template <typename T>
-bool cast(std::string &&token, void *output) { return false; }
+bool cast(std::string &&token, void *output) {
+    throw std::logic_error("Template specialization for cast() was not provided for this type!");
+}
 
 template <>
 bool cast<bool>(std::string &&token, void *output) {
