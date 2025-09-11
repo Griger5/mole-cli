@@ -74,17 +74,15 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(hello_test
-    "tests/hello_test.cpp"
+add_executable(molecli_tests
+    "tests/test_tokenize.cpp"
 )
 
-target_compile_features(hello_test PUBLIC cxx_std_17)
+target_compile_features(molecli_tests PUBLIC cxx_std_17)
 
-target_link_libraries(hello_test
-    GTest::gtest_main
-)
+target_link_libraries(molecli_tests GTest::gtest_main)
 
 include(GoogleTest)
-gtest_discover_tests(hello_test)
+gtest_discover_tests(molecli_tests)
 
 set(INSTALL_GTEST OFF)

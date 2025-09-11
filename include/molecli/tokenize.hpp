@@ -1,5 +1,5 @@
-#ifndef MOLECLI_PARSER_HPP
-#define MOLECLI_PARSER_HPP
+#ifndef MOLECLI_TOKENIZE_HPP
+#define MOLECLI_TOKENIZE_HPP
 
 #include <tuple>
 #include <string>
@@ -30,4 +30,4 @@ std::tuple<std::string, std::vector<std::string>> tokenize(std::string &&line) {
 
 } // molecli::detail
 
-#endif // MOLECLI_PARSER_HPP
+#endif // MOLECLI_TOKENIZE_HPP
