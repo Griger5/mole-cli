@@ -78,9 +78,13 @@ add_executable(hello_test
     "tests/hello_test.cpp"
 )
 
+target_compile_features(hello_test PUBLIC cxx_std_17)
+
 target_link_libraries(hello_test
     GTest::gtest_main
 )
 
 include(GoogleTest)
 gtest_discover_tests(hello_test)
+
+set(INSTALL_GTEST OFF)
