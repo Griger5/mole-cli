@@ -5,20 +5,20 @@
 using namespace molecli::detail;
 
 template <typename T>
-class CasterCorrectOutputsTests : public ::testing::TestWithParam<std::tuple<std::string, T>> {
+class CasterCorrectOutputTests : public ::testing::TestWithParam<std::tuple<std::string, T>> {
 protected:
     void *output;
 
-    CasterCorrectOutputsTests() {
+    CasterCorrectOutputTests() {
         this->output = new T;
     }
 
-    ~CasterCorrectOutputsTests() {
+    ~CasterCorrectOutputTests() {
         delete static_cast<T*>(output);
     }
 };
 
-using CasterCorrectBoolTests = CasterCorrectOutputsTests<bool>;
+using CasterCorrectBoolTests = CasterCorrectOutputTests<bool>;
 
 TEST_P(CasterCorrectBoolTests, ReturnsCorrectValue) {
     auto [token, expected_result] = GetParam();
@@ -42,7 +42,7 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
-using CasterCorrectIntTests = CasterCorrectOutputsTests<int>;
+using CasterCorrectIntTests = CasterCorrectOutputTests<int>;
 
 TEST_P(CasterCorrectIntTests, ReturnsCorrectValue) {
     auto [token, expected_result] = GetParam();
@@ -64,7 +64,7 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
-using CasterCorrectFloatTests = CasterCorrectOutputsTests<float>;
+using CasterCorrectFloatTests = CasterCorrectOutputTests<float>;
 
 TEST_P(CasterCorrectFloatTests, ReturnsCorrectValue) {
     auto [token, expected_result] = GetParam();
@@ -88,7 +88,7 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
-using CasterCorrectDoubleTests = CasterCorrectOutputsTests<double>;
+using CasterCorrectDoubleTests = CasterCorrectOutputTests<double>;
 
 TEST_P(CasterCorrectDoubleTests, ReturnsCorrectValue) {
     auto [token, expected_result] = GetParam();
@@ -112,7 +112,7 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
-using CasterCorrectCharTests = CasterCorrectOutputsTests<char>;
+using CasterCorrectCharTests = CasterCorrectOutputTests<char>;
 
 TEST_P(CasterCorrectCharTests, ReturnsCorrectValue) {
     auto [token, expected_result] = GetParam();
@@ -133,7 +133,7 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
-using CasterCorrectStringTests = CasterCorrectOutputsTests<std::string>;
+using CasterCorrectStringTests = CasterCorrectOutputTests<std::string>;
 
 TEST_P(CasterCorrectStringTests, ReturnsCorrectValue) {
     auto [token, expected_result] = GetParam();
@@ -152,5 +152,55 @@ INSTANTIATE_TEST_CASE_P(
         std::make_tuple("1", "1"),
         std::make_tuple("abc", "abc"),
         std::make_tuple("abc123.,-!", "abc123.,-!")
+    )
+);
+
+struct Empty {};
+
+TEST(CasterTests, ThrowOnUnknownType) {
+    void *output = new Empty;
+
+    EXPECT_THROW({
+        bool success = cast<Empty>("abc", output);
+    }, std::logic_error);
+    
+    delete static_cast<Empty*>(output);
+}
+
+struct IntWrapper {
+    int value;
+};
+
+template <>
+bool molecli::detail::cast<IntWrapper>(std::string &&token, void *output) {
+    IntWrapper *output_intwrapper = static_cast<IntWrapper*>(output);
+    
+    if (token.find_first_not_of("0123456789") == std::string::npos) {
+        output_intwrapper->value = std::stoi(token);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+
+using CasterCorrectUserDefinedTypeTests = CasterCorrectOutputTests<IntWrapper>;
+
+TEST_P(CasterCorrectUserDefinedTypeTests, ReturnsCorrectValue) {
+    auto [token, expected_result] = GetParam();
+
+    bool success = cast<IntWrapper>(std::move(token), output);
+
+    ASSERT_TRUE(success);
+    EXPECT_EQ(static_cast<IntWrapper*>(output)->value, expected_result.value);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    CasterTests,
+    CasterCorrectUserDefinedTypeTests,
+    ::testing::Values(
+        std::make_tuple("0", IntWrapper{0}),
+        std::make_tuple("1", IntWrapper{1})
     )
 );
