@@ -18,6 +18,20 @@ protected:
     }
 };
 
+template <typename T>
+class CasterIncorrectOutputTests : public ::testing::TestWithParam<std::tuple<std::string>> {
+protected:
+    void *output;
+
+    CasterIncorrectOutputTests() {
+        this->output = new T;
+    }
+
+    ~CasterIncorrectOutputTests() {
+        delete static_cast<T*>(output);
+    }
+};
+
 using CasterCorrectBoolTests = CasterCorrectOutputTests<bool>;
 
 TEST_P(CasterCorrectBoolTests, ReturnsCorrectValue) {
@@ -39,6 +53,25 @@ INSTANTIATE_TEST_CASE_P(
         std::make_tuple("true", true),
         std::make_tuple("FALSE", false),
         std::make_tuple("TRUE", true)
+    )
+);
+
+using CasterIncorrectBoolTests = CasterIncorrectOutputTests<bool>;
+
+TEST_P(CasterIncorrectBoolTests, CastFails) {
+    auto [token] = GetParam();
+
+    bool success = cast<bool>(std::move(token), output);
+
+    ASSERT_FALSE(success);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    CasterTests,
+    CasterIncorrectBoolTests, 
+    ::testing::Values(
+        std::make_tuple(""),
+        std::make_tuple("notbool")
     )
 );
 
@@ -64,6 +97,28 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
+using CasterIncorrectIntTests = CasterIncorrectOutputTests<int>;
+
+TEST_P(CasterIncorrectIntTests, CastFails) {
+    auto [token] = GetParam();
+
+    bool success = cast<int>(std::move(token), output);
+
+    ASSERT_FALSE(success);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    CasterTests,
+    CasterIncorrectIntTests, 
+    ::testing::Values(
+        std::make_tuple(""),
+        std::make_tuple("1.2"),
+        std::make_tuple("a1"),
+        std::make_tuple("1a"),
+        std::make_tuple("notint")
+    )
+);
+
 using CasterCorrectFloatTests = CasterCorrectOutputTests<float>;
 
 TEST_P(CasterCorrectFloatTests, ReturnsCorrectValue) {
@@ -84,7 +139,32 @@ INSTANTIATE_TEST_CASE_P(
         std::make_tuple("-1", -1),
         std::make_tuple("123", 123),
         std::make_tuple("1.23", 1.23),
-        std::make_tuple("-1.23", -1.23)
+        std::make_tuple("-1.23", -1.23),
+        std::make_tuple(".5", 0.5)
+    )
+);
+
+using CasterIncorrectFloatTests = CasterIncorrectOutputTests<float>;
+
+TEST_P(CasterIncorrectFloatTests, CastFails) {
+    auto [token] = GetParam();
+
+    bool success = cast<float>(std::move(token), output);
+
+    ASSERT_FALSE(success);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    CasterTests,
+    CasterIncorrectFloatTests, 
+    ::testing::Values(
+        std::make_tuple(""),
+        std::make_tuple("1..2"),
+        std::make_tuple("1.2."),
+        std::make_tuple(".1.2"),
+        std::make_tuple("a1"),
+        std::make_tuple("1a"),
+        std::make_tuple("notfloat")
     )
 );
 
@@ -108,7 +188,32 @@ INSTANTIATE_TEST_CASE_P(
         std::make_tuple("-1", -1),
         std::make_tuple("123", 123),
         std::make_tuple("1.23", 1.23),
-        std::make_tuple("-1.23", -1.23)
+        std::make_tuple("-1.23", -1.23),
+        std::make_tuple(".5", 0.5)
+    )
+);
+
+using CasterIncorrectDoubleTests = CasterIncorrectOutputTests<double>;
+
+TEST_P(CasterIncorrectDoubleTests, CastFails) {
+    auto [token] = GetParam();
+
+    bool success = cast<double>(std::move(token), output);
+
+    ASSERT_FALSE(success);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    CasterTests,
+    CasterIncorrectDoubleTests, 
+    ::testing::Values(
+        std::make_tuple(""),
+        std::make_tuple("1..2"),
+        std::make_tuple("1.2."),
+        std::make_tuple(".1.2"),
+        std::make_tuple("a1"),
+        std::make_tuple("1a"),
+        std::make_tuple("notdouble")
     )
 );
 
@@ -130,6 +235,26 @@ INSTANTIATE_TEST_CASE_P(
         std::make_tuple("0", '0'),
         std::make_tuple("1", '1'),
         std::make_tuple("a", 'a')
+    )
+);
+
+using CasterIncorrectCharTests = CasterIncorrectOutputTests<char>;
+
+TEST_P(CasterIncorrectCharTests, CastFails) {
+    auto [token] = GetParam();
+
+    bool success = cast<char>(std::move(token), output);
+
+    ASSERT_FALSE(success);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    CasterTests,
+    CasterIncorrectCharTests, 
+    ::testing::Values(
+        std::make_tuple(""),
+        std::make_tuple("aa"),
+        std::make_tuple("notchar")
     )
 );
 
@@ -183,7 +308,6 @@ bool molecli::detail::cast<IntWrapper>(std::string &&token, void *output) {
         return false;
     }
 }
-
 
 using CasterCorrectUserDefinedTypeTests = CasterCorrectOutputTests<IntWrapper>;
 

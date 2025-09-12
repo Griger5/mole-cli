@@ -31,6 +31,10 @@ bool cast<bool>(std::string &&token, void *output) {
 
 template <>
 bool cast<int>(std::string &&token, void *output) {
+    if (token.empty()) {
+        return false;
+    }
+    
     std::string copy = token;
 
     if (token.at(0) == '-') {
@@ -49,6 +53,10 @@ bool cast<int>(std::string &&token, void *output) {
 
 template <>
 bool cast<float>(std::string &&token, void *output) {
+    if (token.empty()) {
+        return false;
+    }
+
     std::string copy = token;
 
     if (token.at(0) == '-') {
@@ -70,6 +78,10 @@ bool cast<float>(std::string &&token, void *output) {
 
 template <>
 bool cast<double>(std::string &&token, void *output) {
+    if (token.empty()) {
+        return false;
+    }
+
     std::string copy = token;
 
     if (token.at(0) == '-') {
@@ -103,6 +115,10 @@ bool cast<char>(std::string &&token, void *output) {
 
 template <>
 bool cast<std::string>(std::string &&token, void *output) {
+    if (token.empty()) {
+        return false;
+    }
+
     std::string *output_string = static_cast<std::string *>(output);
     *output_string = token;
     return true;
