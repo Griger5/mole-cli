@@ -2,29 +2,32 @@ cmake_minimum_required(VERSION 3.28)
 
 project(molecli VERSION 0.5.0)
 
-add_library(${PROJECT_NAME} INTERFACE)
+add_library(${PROJECT_NAME}
+    "src/command.cpp"
+    "src/help_message.cpp"
+    "src/tokenize.cpp"
+)
 
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
-if(NOT MAX_COMMAND_ARGS)
-    set(MAX_COMMAND_ARGS 10)
-endif()
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+target_include_directories(${PROJECT_NAME} PRIVATE external/isocline/include)
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
-execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copytree('external/isocline/src/', 'include/molecli/external/isocline/src/', dirs_exist_ok=True)")
-execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copytree('external/isocline/include/', 'include/molecli/external/isocline/include/', dirs_exist_ok=True)")
 execute_process(
-    COMMAND ${Python3_EXECUTABLE} "-c" "import sys; print(''.join([line if not 'setlocale' in line else '  const char* loc = setlocale(LC_ALL,\"C\");' for line in sys.stdin]))"
-    INPUT_FILE ${CMAKE_SOURCE_DIR}/include/molecli/external/isocline/src/tty.c
-    OUTPUT_FILE ${CMAKE_SOURCE_DIR}/include/molecli/external/isocline/src/tty2.c
+    COMMAND ${Python3_EXECUTABLE} "-c" "import sys; print(''.join([line if not 'setlocale' in line else '''  const char* loc = setlocale(LC_ALL,\"C\");\n''' for line in sys.stdin]))"
+    INPUT_FILE ${CMAKE_SOURCE_DIR}/external/isocline/src/tty.c
+    OUTPUT_FILE ${CMAKE_SOURCE_DIR}/external/isocline/src/tty2.c
 )
-execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import os; os.remove('include/molecli/external/isocline/src/tty.c'); os.rename('include/molecli/external/isocline/src/tty2.c', 'include/molecli/external/isocline/src/tty.c')")
+execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import os; os.remove('external/isocline/src/tty.c'); os.rename('external/isocline/src/tty2.c', 'external/isocline/src/tty.c')")
+
+target_sources(${PROJECT_NAME} PRIVATE external/isocline/src/isocline.c)
 
 include(GNUInstallDirs)
 
 target_include_directories(
-    ${PROJECT_NAME} INTERFACE
+    ${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
@@ -65,6 +68,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME} DESTINATION incl
 include(FetchContent)
 FetchContent_Declare(
     googletest
+    EXCLUDE_FROM_ALL
     URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
 )
 
@@ -81,9 +85,7 @@ add_executable(molecli_tests
 
 target_compile_features(molecli_tests PUBLIC cxx_std_17)
 
-target_link_libraries(molecli_tests GTest::gtest_main)
+target_link_libraries(molecli_tests ${PROJECT_NAME} GTest::gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(molecli_tests)
-
-set(INSTALL_GTEST OFF)

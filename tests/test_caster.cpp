@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "molecli/caster.hpp"
+#include "../include/molecli/caster.hpp"
 
 using namespace molecli::detail;
 

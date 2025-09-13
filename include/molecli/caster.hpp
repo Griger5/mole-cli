@@ -4,6 +4,7 @@
 #include <optional>
 #include <string>
 #include <algorithm>
+#include <stdexcept>
 
 namespace molecli::detail {
 

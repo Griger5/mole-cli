@@ -8,7 +8,7 @@
 #include "help_message.hpp"
 #include "static_vars.hpp"
 
-#include "external/isocline/src/isocline.c"
+#include "external/isocline/include/isocline.h"
 
 #include <map>
 #include <string>
@@ -65,9 +65,7 @@ private:
     }
 
 public:
-    CLI() : prompt{""} {
-        static_vars = std::make_shared<StaticVarsT>();
-    }
+    CLI() : prompt{""}, static_vars{std::make_shared<StaticVarsT>()} {}
 
     CLI(const std::string &p) : prompt{p} {}
 

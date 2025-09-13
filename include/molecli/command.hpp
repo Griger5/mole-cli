@@ -4,9 +4,8 @@
 #include "typing_utils.hpp"
 
 #include <functional>
-#include <memory>
 #include <vector>
-#include <tuple>
+#include <string>
 
 namespace molecli::detail {
 
@@ -34,46 +33,13 @@ public:
 
     Command() = default;
 
-    Command(std::function<void(const Args &)> &&func, Args &&args, std::vector<Caster> &&casts, std::vector<DeallocFunc> &&dealloc, std::vector<std::string> &&names) {
-        this->func = std::move(func);
-        this->args = std::move(args);
-        this->casters = std::move(casts);
-        this->dealloc_args = std::move(dealloc);
-        this->type_names = std::move(names);
-    }
+    Command(std::function<void(const Args &)> &&func, Args &&args, std::vector<Caster> &&casts, std::vector<DeallocFunc> &&dealloc, std::vector<std::string> &&names);
 
-    void dealloc() {
-        for (std::size_t i = 0; i < this->args.size(); i++) {
-            this->dealloc_args[i](this->args, i);
-        }
-    }
+    void dealloc();
 
-    Status load_arguments(std::vector<std::string> tokens) {
-        std::size_t i = 0;
-        bool cast_success;
+    Status load_arguments(std::vector<std::string> tokens);
 
-        for (auto &&token : tokens) {
-            if (i >= this->args.size()) {
-                return Status{TOO_MANY_ARGS, i+1, this->args.size(), ""};
-            }
-            else if (!this->casters[i](std::move(token), this->args[i])) {
-                return Status{WRONG_TYPE, i, this->args.size(), this->type_names[i]};
-            }
-
-            i++;
-        }
-
-        if (i < this->args.size()) {
-            return Status{INSUFFICIENT_COUNT, i, this->args.size(), ""};
-        }
-        else {
-            return Status{NO_ERROR, 0, 0, ""};
-        }
-    }
-
-    void execute() {
-        this->func(this->args);
-    }
+    void execute();
 };
 
 } // molecli::detail
