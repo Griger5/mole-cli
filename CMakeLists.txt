@@ -65,27 +65,29 @@ install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME} DESTINATION include)
 
-include(FetchContent)
-FetchContent_Declare(
-    googletest
-    EXCLUDE_FROM_ALL
-    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-)
+if (BUILD_TESTS)
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        EXCLUDE_FROM_ALL
+        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    )
 
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
 
-enable_testing()
+    enable_testing()
 
-add_executable(molecli_tests
-    "tests/test_tokenize.cpp"
-    "tests/test_caster.cpp"
-)
+    add_executable(molecli_tests
+        "tests/test_tokenize.cpp"
+        "tests/test_caster.cpp"
+    )
 
-target_compile_features(molecli_tests PUBLIC cxx_std_17)
+    target_compile_features(molecli_tests PUBLIC cxx_std_17)
 
-target_link_libraries(molecli_tests ${PROJECT_NAME} GTest::gtest_main)
+    target_link_libraries(molecli_tests ${PROJECT_NAME} GTest::gtest_main)
 
-include(GoogleTest)
-gtest_discover_tests(molecli_tests)
+    include(GoogleTest)
+    gtest_discover_tests(molecli_tests)
+endif()
