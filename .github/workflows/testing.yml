@@ -1,0 +1,52 @@
+name: build_and_test
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 13 * * 4'
+  release:
+    types: [published]
+
+jobs:
+  debug_build_ok:
+    runs-on: ubuntu-latest
+
+    steps:
+       - uses: actions/checkout@v4
+         with:
+            submodules: recursive
+            fetch-depth: 0
+         
+       - run: cmake -S . -B build/
+       - run: cmake --build build/
+
+  build_and_test:
+    needs: [debug_build_ok]
+    name: Build and test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      
+      - name: Configure CMake
+        run: cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build/ -DBUILD_TESTS=1
+      
+      - name: Build library
+        run: cmake --build ${{ github.workspace }}/build/
+      
+      - name: Run tests
+        run: ctest --test-dir ${{ github.workspace }}/build/ --output-on-failure
