@@ -24,8 +24,8 @@ jobs:
             submodules: recursive
             fetch-depth: 0
          
-       - run: cmake -S . -B build/
-       - run: cmake --build build/
+       - run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build/
+       - run: cmake --build $GITHUB_WORKSPACE/build/
 
   build_and_test:
     needs: [debug_build_ok]
@@ -34,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-latest, macos-13]
 
     steps:
       - uses: actions/checkout@v4
