@@ -43,10 +43,10 @@ jobs:
           fetch-depth: 0
       
       - name: Configure CMake
-        run: cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build/ -DBUILD_TESTS=1
+        run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build/ -DBUILD_TESTS=1
       
       - name: Build library
-        run: cmake --build ${{ github.workspace }}/build/
+        run: cmake --build $GITHUB_WORKSPACE/build/
       
       - name: Run tests
-        run: ctest --test-dir ${{ github.workspace }}/build/ --output-on-failure
+        run: ctest --test-dir $GITHUB_WORKSPACE/build/ --output-on-failure
