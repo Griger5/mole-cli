@@ -3,9 +3,9 @@ cmake_minimum_required(VERSION 3.28)
 project(molecli VERSION 0.5.0)
 
 add_library(${PROJECT_NAME}
-    "src/command.cpp"
-    "src/help_message.cpp"
-    "src/tokenize.cpp"
+    src/command.cpp
+    src/help_message.cpp
+    src/tokenize.cpp
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
@@ -40,14 +40,14 @@ install(TARGETS ${PROJECT_NAME}
 
 include(CMakePackageConfigHelpers)
 
-write_basic_package_version_file("${PROJECT_NAME}ConfigVersion.cmake"
+write_basic_package_version_file(${PROJECT_NAME}ConfigVersion.cmake
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
 )
 
 configure_package_config_file(
-    "${PROJECT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in"
-    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in
+    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
     INSTALL_DESTINATION
     ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
 )
@@ -80,8 +80,9 @@ if (BUILD_TESTS)
     enable_testing()
 
     add_executable(molecli_tests
-        "tests/test_tokenize.cpp"
-        "tests/test_caster.cpp"
+        tests/test_caster.cpp
+        tests/test_command.cpp
+        tests/test_tokenize.cpp
     )
 
     target_compile_features(molecli_tests PUBLIC cxx_std_17)
