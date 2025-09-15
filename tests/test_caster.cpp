@@ -328,3 +328,22 @@ INSTANTIATE_TEST_CASE_P(
         std::make_tuple("1", IntWrapper{1})
     )
 );
+
+using CasterIncorrectUserDefinedTypeTests = CasterIncorrectOutputTests<IntWrapper>;
+
+TEST_P(CasterIncorrectUserDefinedTypeTests, CastFails) {
+    auto [token] = GetParam();
+
+    bool success = cast<IntWrapper>(std::move(token), output);
+
+    ASSERT_FALSE(success);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    CasterTests,
+    CasterIncorrectUserDefinedTypeTests, 
+    ::testing::Values(
+        std::make_tuple("1a"),
+        std::make_tuple("1.2")
+    )
+);

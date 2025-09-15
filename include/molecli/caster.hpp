@@ -14,7 +14,7 @@ bool cast(std::string &&token, void *output) {
 }
 
 template <>
-bool cast<bool>(std::string &&token, void *output) {
+inline bool cast<bool>(std::string &&token, void *output) {
     if (!token.compare("0") || !token.compare("false") || !token.compare("FALSE")) {
         bool *output_bool = static_cast<bool *>(output);
         *output_bool = false;
@@ -31,7 +31,7 @@ bool cast<bool>(std::string &&token, void *output) {
 }
 
 template <>
-bool cast<int>(std::string &&token, void *output) {
+inline bool cast<int>(std::string &&token, void *output) {
     if (token.empty()) {
         return false;
     }
@@ -53,7 +53,7 @@ bool cast<int>(std::string &&token, void *output) {
 }
 
 template <>
-bool cast<float>(std::string &&token, void *output) {
+inline bool cast<float>(std::string &&token, void *output) {
     if (token.empty()) {
         return false;
     }
@@ -78,7 +78,7 @@ bool cast<float>(std::string &&token, void *output) {
 }
 
 template <>
-bool cast<double>(std::string &&token, void *output) {
+inline bool cast<double>(std::string &&token, void *output) {
     if (token.empty()) {
         return false;
     }
@@ -103,7 +103,7 @@ bool cast<double>(std::string &&token, void *output) {
 }
 
 template <>
-bool cast<char>(std::string &&token, void *output) {
+inline bool cast<char>(std::string &&token, void *output) {
     if (token.length() != 1) {
         return false;
     }
@@ -115,7 +115,7 @@ bool cast<char>(std::string &&token, void *output) {
 }
 
 template <>
-bool cast<std::string>(std::string &&token, void *output) {
+inline bool cast<std::string>(std::string &&token, void *output) {
     if (token.empty()) {
         return false;
     }
