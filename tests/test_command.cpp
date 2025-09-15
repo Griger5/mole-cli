@@ -5,7 +5,7 @@
 
 using namespace molecli::detail;
 
-class CommandLoadArgumentsTests : public ::testing::TestWithParam<std::tuple<std::vector<std::string>, Command::Status>> {
+class CommandLoadArgumentsTests : public ::testing::Test {
 protected:
     Command cmd;
 

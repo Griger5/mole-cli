@@ -82,6 +82,7 @@ if (BUILD_TESTS)
     add_executable(molecli_tests
         tests/test_caster.cpp
         tests/test_command.cpp
+        tests/test_command_s.cpp
         tests/test_tokenize.cpp
     )
 
