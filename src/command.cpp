@@ -20,11 +20,12 @@ Command::Status Command::load_arguments(std::vector<std::string> tokens) {
     std::size_t i = 0;
     bool cast_success;
 
+    if (tokens.size() > this->args.size()) {
+        return Status{TOO_MANY_ARGS, tokens.size(), this->args.size(), ""};
+    }
+
     for (auto &&token : tokens) {
-        if (i >= this->args.size()) {
-            return Status{TOO_MANY_ARGS, i+1, this->args.size(), ""};
-        }
-        else if (!this->casters[i](std::move(token), this->args[i])) {
+        if (!this->casters[i](std::move(token), this->args[i])) {
             return Status{WRONG_TYPE, i, this->args.size(), this->type_names[i]};
         }
 
