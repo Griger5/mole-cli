@@ -2,6 +2,7 @@
 #define MOLECLI_MOLECLI_HPP
 
 #include "cli.hpp"
+#include "cli_s.hpp"
 
 #define MOLECLI_ADD_CASTER(Type, caster_func) \
 template <> \

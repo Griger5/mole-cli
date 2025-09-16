@@ -3,6 +3,15 @@
 
 #include "cli.hpp"
 
+// forward declarations for isocline library functions
+extern "C" {
+
+char* ic_readline(const char* prompt_text);
+void ic_set_history(const char* fname, long max_entries);
+void ic_history_add(const char* entry);
+
+}
+
 namespace molecli {
 
 using Args = std::vector<void *>;
