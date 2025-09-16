@@ -13,7 +13,10 @@
 #include <vector>
 #include <tuple>
 #include <iostream>
+
+#ifndef _MSC_VER
 #include <cxxabi.h>
+#endif
 
 template <typename... Ts>
 class CLI_s;
@@ -39,17 +42,27 @@ protected:
             caster_vec.push_back(detail::cast<First>);
             dealloc_vec.push_back([](std::vector<void*> &v, std::size_t idx) {delete static_cast<First *>(v[idx]);});
 
-            int status = -1;
-            char *name = abi::__cxa_demangle(typeid(First).name(), 0, 0, &status);
-            std::string name_str{name};
-            if (name_str == "std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >") {
-                type_names_vec.push_back("std::string");
-            }
-            else {
-                type_names_vec.push_back(name_str);
-            }
-            free(name);
-            
+            #ifndef _MSC_VER
+                int status = -1;
+                char *name = abi::__cxa_demangle(typeid(First).name(), 0, 0, &status);
+                std::string name_str{name};
+                if (name_str == "std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >") {
+                    type_names_vec.push_back("std::string");
+                }
+                else {
+                    type_names_vec.push_back(name_str);
+                }
+                free(name);
+            #else
+                std::string name_str = typeid(First).name();
+                if (name_str == "std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >") {
+                    type_names_vec.push_back("std::string");
+                }
+                else {
+                    type_names_vec.push_back(name_str);
+                }
+            #endif
+
             add_command_impl<Idx - 1, Rest...>(arg_vec, caster_vec, dealloc_vec, type_names_vec);
         }
     }
