@@ -55,7 +55,7 @@ protected:
                 free(name);
             #else
                 std::string name_str = typeid(First).name();
-                if (name_str == "std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >") {
+                if (name_str == "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >") {
                     type_names_vec.push_back("std::string");
                 }
                 else {
