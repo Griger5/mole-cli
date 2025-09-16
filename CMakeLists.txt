@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(molecli VERSION 0.5.0)
+project(molecli VERSION 0.7.0)
 
 add_library(${PROJECT_NAME}
+    src/cli.cpp
     src/command.cpp
     src/help_message.cpp
     src/tokenize.cpp

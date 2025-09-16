@@ -15,6 +15,9 @@
 #include <iostream>
 #include <cxxabi.h>
 
+template <typename... Ts>
+class CLI_s;
+
 namespace molecli {
 
 using Args = std::vector<void *>;
@@ -26,6 +29,8 @@ protected:
     const std::string prompt;
     std::map<std::string, detail::Command> commands;
     std::map<std::string, detail::HelpMessage> help_messages;
+    std::map<std::string, std::shared_ptr<CLI>> sub_cli;
+    bool is_main = true;
 
     template <std::size_t Idx, typename First = void, typename... Rest>
     void add_command_impl(Args &arg_vec, std::vector<Caster> &caster_vec, std::vector<DeallocFunc> &dealloc_vec, std::vector<std::string> &type_names_vec) {
@@ -83,6 +88,8 @@ public:
         this->help_messages[command_name] = detail::HelpMessage{std::move(command_name), std::move(description), std::move(type_names_vec)};
         this->commands[command_name] = detail::Command{std::move(func_wrapper), std::move(arg_vec), std::move(caster_vec), std::move(dealloc_vec), std::move(type_names_vec)};
     }
+
+    void add_sub_cli(std::string &&cli_name, std::shared_ptr<CLI> cli_ptr);
 
     virtual void run_loop(std::ostream &stream = std::cout);
 };

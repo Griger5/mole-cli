@@ -10,9 +10,17 @@ CLI::~CLI() {
     }
 }
 
+void CLI::add_sub_cli(std::string &&cli_name, std::shared_ptr<CLI> cli_ptr) {
+    cli_ptr->is_main = false;
+    this->sub_cli[cli_name] = cli_ptr;
+}
+
 void CLI::run_loop(std::ostream &stream) {
     char *temp;
-    ic_set_history(NULL, -1);
+    
+    if (this->is_main) {
+        ic_set_history(NULL, -1);
+    }
 
     while (true) {
         temp = ic_readline(this->prompt.c_str());
@@ -41,6 +49,9 @@ void CLI::run_loop(std::ostream &stream) {
                     stream << "Warning: Wrong type of argument #" << status.error_idx + 1 << ". Argument type should be: " << status.type_name << '\n';
                     break;
             }
+        }
+        else if (this->sub_cli.find(command_name) != this->sub_cli.end()) {
+            this->sub_cli[command_name]->run_loop();
         }
         else if (command_name == "exit" || command_name == "EXIT") {
             break;

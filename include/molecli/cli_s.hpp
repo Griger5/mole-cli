@@ -22,6 +22,7 @@ template <typename... StaticTypes>
 class CLI_s final : public CLI {
 public:
     using StaticVarsT = detail::StaticVars<StaticTypes...>;
+    using element_type = CLI_s<StaticTypes...>;
 
 private:
     std::map<std::string, detail::Command_s<StaticTypes...>> static_commands;
@@ -64,7 +65,10 @@ public:
 
     void run_loop(std::ostream &stream = std::cout) override {
         char *temp;
-        ic_set_history(NULL, -1);
+        
+        if (this->is_main) {
+            ic_set_history(NULL, -1);
+        }
 
         while (true) {
             temp = ic_readline(this->prompt.c_str());
