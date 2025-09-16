@@ -18,4 +18,8 @@ bool molecli::detail::cast<Type>(std::string &&token, void *output) { \
     } \
 }
 
+#define MOLECLI_STATIC_VARS(cli_name) std::shared_ptr<decltype(cli_name)::element_type::StaticVarsT> static_vars
+
+#define GetStaticVar(idx) static_vars->get<idx>()
+
 #endif // MOLECLI_MOLECLI_HPP
