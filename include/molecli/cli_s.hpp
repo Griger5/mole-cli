@@ -63,7 +63,7 @@ public:
         this->static_commands[command_name] = detail::Command_s{std::move(func_wrapper), std::move(arg_vec), std::move(caster_vec), std::move(dealloc_vec), std::move(type_names_vec)};
     }
 
-    void run_loop(std::ostream &stream = std::cout) override {
+    void run_loop(std::istream &i_stream = std::cin, std::ostream &o_stream = std::cout) override {
         char *temp;
         
         if (this->is_main) {
@@ -88,13 +88,13 @@ public:
                         this->commands[command_name].execute();
                         break;
                     case detail::Command::INSUFFICIENT_COUNT:
-                        stream << "Warning: Insufficient number of arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
+                        o_stream << "Warning: Insufficient number of arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
                         break;
                     case detail::Command::TOO_MANY_ARGS:
-                        stream << "Warning: Too many arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
+                        o_stream << "Warning: Too many arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
                         break;
                     case detail::Command::WRONG_TYPE:
-                        stream << "Warning: Wrong type of argument #" << status.error_idx + 1 << ". Argument type should be: " << status.type_name << '\n';
+                        o_stream << "Warning: Wrong type of argument #" << status.error_idx + 1 << ". Argument type should be: " << status.type_name << '\n';
                         break;
                 }
             }
@@ -106,13 +106,13 @@ public:
                         this->static_commands[command_name].execute(this->static_vars);
                         break;
                     case detail::Command::INSUFFICIENT_COUNT:
-                        stream << "Warning: Insufficient number of arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
+                        o_stream << "Warning: Insufficient number of arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
                         break;
                     case detail::Command::TOO_MANY_ARGS:
-                        stream << "Warning: Too many arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
+                        o_stream << "Warning: Too many arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
                         break;
                     case detail::Command::WRONG_TYPE:
-                        stream << "Warning: Wrong type of argument #" << status.error_idx + 1 << ". Argument type should be: " << status.type_name << '\n';
+                        o_stream << "Warning: Wrong type of argument #" << status.error_idx + 1 << ". Argument type should be: " << status.type_name << '\n';
                         break;
                 }
             }
@@ -120,17 +120,17 @@ public:
                 break;
             }
             else if (command_name == "help" || command_name == "HELP") {
-                stream << "AVAILABLE COMMANDS:\n";
+                o_stream << "AVAILABLE COMMANDS:\n";
     
                 for (auto &[name, msg] : this->help_messages) {
-                    stream << msg;
+                    o_stream << msg;
                 }
 
-                stream << "\033[36mhelp\033[39m()/\033[36mHELP\033[39m()\n    Lists all available commands\n--------------------\n";
-                stream << "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exists the current CLI\n--------------------\n";
+                o_stream << "\033[36mhelp\033[39m()/\033[36mHELP\033[39m()\n    Lists all available commands\n--------------------\n";
+                o_stream << "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exists the current CLI\n--------------------\n";
             }
             else {
-                stream << "Unknown command. Maybe try using \"help\"?\n";
+                o_stream << "Unknown command. Maybe try using \"help\"?\n";
             }
         }
     }

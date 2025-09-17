@@ -104,7 +104,7 @@ public:
 
     void add_sub_cli(std::string &&cli_name, std::shared_ptr<CLI> cli_ptr);
 
-    virtual void run_loop(std::ostream &stream = std::cout);
+    virtual void run_loop(std::istream &i_stream = std::cin, std::ostream &o_stream = std::cout);
 };
 
 } // molecli
