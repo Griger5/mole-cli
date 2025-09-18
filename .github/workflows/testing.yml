@@ -31,7 +31,7 @@ jobs:
        - run: cmake --build $GITHUB_WORKSPACE/build/
 
   build_and_test:
-    needs: [debug_build_ok]
+    needs: [debug_builds_ok]
     name: Build and test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
