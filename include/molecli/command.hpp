@@ -37,7 +37,7 @@ public:
 
     void dealloc();
 
-    Status load_arguments(std::vector<std::string> tokens);
+    Status load_arguments(std::vector<std::string> &&tokens);
 
     void execute();
 };

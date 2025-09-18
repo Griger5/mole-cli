@@ -75,6 +75,8 @@ protected:
         }
     }
 
+    virtual bool additional_checks(const std::string &command_name, std::vector<std::string> &&arguments, std::ostream &ostream) {return false;};
+
 public:
     CLI() : prompt{""} {}
 

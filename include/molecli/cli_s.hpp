@@ -3,6 +3,7 @@
 
 #include "cli.hpp"
 
+#ifndef NO_DEPS
 // forward declarations for isocline library functions
 extern "C" {
 
@@ -11,6 +12,7 @@ void ic_set_history(const char* fname, long max_entries);
 void ic_history_add(const char* entry);
 
 }
+#endif
 
 namespace molecli {
 
@@ -63,75 +65,28 @@ public:
         this->static_commands[command_name] = detail::Command_s{std::move(func_wrapper), std::move(arg_vec), std::move(caster_vec), std::move(dealloc_vec), std::move(type_names_vec)};
     }
 
-    void run_loop(std::istream &i_stream = std::cin, std::ostream &o_stream = std::cout) override {
-        char *temp;
-        
-        if (this->is_main) {
-            ic_set_history(NULL, -1);
+    bool additional_checks(const std::string &command_name, std::vector<std::string> &&arguments, std::ostream &o_stream) override {
+        if (this->static_commands.find(command_name) != this->static_commands.end()) {
+            detail::Command::Status status = this->static_commands[command_name].load_arguments(std::move(arguments));
+
+            switch(status.code) {
+                case detail::Command::NO_ERROR:
+                    this->static_commands[command_name].execute(this->static_vars);
+                    break;
+                case detail::Command::INSUFFICIENT_COUNT:
+                    o_stream << "Warning: Insufficient number of arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
+                    break;
+                case detail::Command::TOO_MANY_ARGS:
+                    o_stream << "Warning: Too many arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
+                    break;
+                case detail::Command::WRONG_TYPE:
+                    o_stream << "Warning: Wrong type of argument #" << status.error_idx + 1 << ". Argument type should be: " << status.type_name << '\n';
+                    break;
+            }
+            return true;
         }
-
-        while (true) {
-            temp = ic_readline(this->prompt.c_str());
-            auto [command_name, arguments] = detail::tokenize(std::string{temp});
-
-            ic_history_add(temp);
-            free(temp);
-
-            if (command_name == "") {
-                continue;
-            }
-            else if (this->commands.find(command_name) != this->commands.end()) {
-                detail::Command::Status status = this->commands[command_name].load_arguments(arguments);
-
-                switch(status.code) {
-                    case detail::Command::NO_ERROR:
-                        this->commands[command_name].execute();
-                        break;
-                    case detail::Command::INSUFFICIENT_COUNT:
-                        o_stream << "Warning: Insufficient number of arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
-                        break;
-                    case detail::Command::TOO_MANY_ARGS:
-                        o_stream << "Warning: Too many arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
-                        break;
-                    case detail::Command::WRONG_TYPE:
-                        o_stream << "Warning: Wrong type of argument #" << status.error_idx + 1 << ". Argument type should be: " << status.type_name << '\n';
-                        break;
-                }
-            }
-            else if (this->static_commands.find(command_name) != this->static_commands.end()) {
-                detail::Command::Status status = this->static_commands[command_name].load_arguments(arguments);
-
-                switch(status.code) {
-                    case detail::Command::NO_ERROR:
-                        this->static_commands[command_name].execute(this->static_vars);
-                        break;
-                    case detail::Command::INSUFFICIENT_COUNT:
-                        o_stream << "Warning: Insufficient number of arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
-                        break;
-                    case detail::Command::TOO_MANY_ARGS:
-                        o_stream << "Warning: Too many arguments. Expected: " << status.arg_count << ", received: " << status.error_idx << '\n';
-                        break;
-                    case detail::Command::WRONG_TYPE:
-                        o_stream << "Warning: Wrong type of argument #" << status.error_idx + 1 << ". Argument type should be: " << status.type_name << '\n';
-                        break;
-                }
-            }
-            else if (command_name == "exit" || command_name == "EXIT") {
-                break;
-            }
-            else if (command_name == "help" || command_name == "HELP") {
-                o_stream << "AVAILABLE COMMANDS:\n";
-    
-                for (auto &[name, msg] : this->help_messages) {
-                    o_stream << msg;
-                }
-
-                o_stream << "\033[36mhelp\033[39m()/\033[36mHELP\033[39m()\n    Lists all available commands\n--------------------\n";
-                o_stream << "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exists the current CLI\n--------------------\n";
-            }
-            else {
-                o_stream << "Unknown command. Maybe try using \"help\"?\n";
-            }
+        else {
+            return false;
         }
     }
 };

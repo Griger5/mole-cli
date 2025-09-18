@@ -12,18 +12,23 @@ add_library(${PROJECT_NAME}
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
-target_include_directories(${PROJECT_NAME} PRIVATE external/isocline/include)
 
-find_package(Python3 REQUIRED COMPONENTS Interpreter)
+if(NOT NO_DEPS)
+    target_include_directories(${PROJECT_NAME} PRIVATE external/isocline/include)
 
-execute_process(
-    COMMAND ${Python3_EXECUTABLE} "-c" "import sys; print(''.join([line if not 'setlocale' in line else '''  const char* loc = setlocale(LC_ALL,\"C\");\n''' for line in sys.stdin]))"
-    INPUT_FILE ${CMAKE_SOURCE_DIR}/external/isocline/src/tty.c
-    OUTPUT_FILE ${CMAKE_SOURCE_DIR}/external/isocline/src/tty2.c
-)
-execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import os; os.remove('external/isocline/src/tty.c'); os.rename('external/isocline/src/tty2.c', 'external/isocline/src/tty.c')")
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
-target_sources(${PROJECT_NAME} PRIVATE external/isocline/src/isocline.c)
+    execute_process(
+        COMMAND ${Python3_EXECUTABLE} "-c" "import sys; print(''.join([line if not 'setlocale' in line else '''  const char* loc = setlocale(LC_ALL,\"C\");\n''' for line in sys.stdin]))"
+        INPUT_FILE ${CMAKE_SOURCE_DIR}/external/isocline/src/tty.c
+        OUTPUT_FILE ${CMAKE_SOURCE_DIR}/external/isocline/src/tty2.c
+    )
+    execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import os; os.remove('external/isocline/src/tty.c'); os.rename('external/isocline/src/tty2.c', 'external/isocline/src/tty.c')")
+
+    target_sources(${PROJECT_NAME} PRIVATE external/isocline/src/isocline.c)
+else()
+    add_compile_definitions(NO_DEPS)
+endif()
 
 include(GNUInstallDirs)
 

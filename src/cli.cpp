@@ -1,6 +1,8 @@
 #include "molecli/cli.hpp"
 
+#ifndef NO_DEPS
 #include "../external/isocline/include/isocline.h"
+#endif
 
 namespace molecli {
 
@@ -16,24 +18,42 @@ void CLI::add_sub_cli(std::string &&cli_name, std::shared_ptr<CLI> cli_ptr) {
 }
 
 void CLI::run_loop(std::istream &i_stream, std::ostream &o_stream) {
-    char *temp;
+    std::string line;
     
-    if (this->is_main) {
-        ic_set_history(NULL, -1);
-    }
+    #ifndef NO_DEPS
+        char *temp;
+        if (&i_stream == &std::cin) {
+            if (this->is_main) {
+                ic_set_history(NULL, -1);
+            }
+        }
+    #endif
 
     while (true) {
-        temp = ic_readline(this->prompt.c_str());
-        auto [command_name, arguments] = detail::tokenize(std::string{temp});
+        #ifndef NO_DEPS
+            if (&i_stream == &std::cin) {
+                temp = ic_readline(this->prompt.c_str());
+                line = std::string{temp};
 
-        ic_history_add(temp);
-        free(temp);
+                ic_history_add(temp);
+                free(temp);
+            }
+            else {
+                o_stream << this->prompt << "> ";
+                std::getline(i_stream, line, '\n');
+            }
+        #else
+            o_stream << this->prompt << "> ";
+            std::getline(i_stream, line, '\n');
+        #endif
+
+        auto [command_name, arguments] = detail::tokenize(std::move(line));
 
         if (command_name == "") {
             continue;
         }
         else if (this->commands.find(command_name) != this->commands.end()) {
-            detail::Command::Status status = this->commands[command_name].load_arguments(arguments);
+            detail::Command::Status status = this->commands[command_name].load_arguments(std::move(arguments));
 
             switch(status.code) {
                 case detail::Command::NO_ERROR:
@@ -49,6 +69,9 @@ void CLI::run_loop(std::istream &i_stream, std::ostream &o_stream) {
                     o_stream << "Warning: Wrong type of argument #" << status.error_idx + 1 << ". Argument type should be: " << status.type_name << '\n';
                     break;
             }
+        }
+        else if (this->additional_checks(command_name, std::move(arguments), o_stream)) {
+            ;
         }
         else if (this->sub_cli.find(command_name) != this->sub_cli.end()) {
             this->sub_cli[command_name]->run_loop();

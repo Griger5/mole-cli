@@ -15,7 +15,7 @@ on:
     types: [published]
 
 jobs:
-  debug_build_ok:
+  debug_builds_ok:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,6 +25,9 @@ jobs:
             fetch-depth: 0
          
        - run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build/
+       - run: cmake --build $GITHUB_WORKSPACE/build/
+       - run: rm -rf $GITHUB_WORKSPACE/build/
+       - run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build/ -DNO_DEPS=1
        - run: cmake --build $GITHUB_WORKSPACE/build/
 
   build_and_test:

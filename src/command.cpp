@@ -16,7 +16,7 @@ void Command::dealloc() {
     }
 }
 
-Command::Status Command::load_arguments(std::vector<std::string> tokens) {
+Command::Status Command::load_arguments(std::vector<std::string> &&tokens) {
     std::size_t i = 0;
     bool cast_success;
 
