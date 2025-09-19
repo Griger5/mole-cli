@@ -39,11 +39,12 @@ void CLI::run_loop(std::istream &i_stream, std::ostream &o_stream) {
                 free(temp);
             }
             else {
-                o_stream << this->prompt << "> ";
                 std::getline(i_stream, line, '\n');
             }
         #else
-            o_stream << this->prompt << "> ";
+            if (&i_stream == &std::cin) {
+                o_stream << this->prompt << "> ";
+            }
             std::getline(i_stream, line, '\n');
         #endif
 
@@ -74,7 +75,7 @@ void CLI::run_loop(std::istream &i_stream, std::ostream &o_stream) {
             ;
         }
         else if (this->sub_cli.find(command_name) != this->sub_cli.end()) {
-            this->sub_cli[command_name]->run_loop();
+            this->sub_cli[command_name]->run_loop(i_stream, o_stream);
         }
         else if (command_name == "exit" || command_name == "EXIT") {
             break;
