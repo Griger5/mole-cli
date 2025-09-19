@@ -89,6 +89,7 @@ if (BUILD_TESTS)
         tests/test_caster.cpp
         tests/test_command.cpp
         tests/test_command_s.cpp
+        tests/test_help_message.cpp
         tests/test_tokenize.cpp
     )
 
