@@ -62,6 +62,7 @@ public:
         };
 
         this->help_messages[command_name] = detail::HelpMessage{std::move(command_name), std::move(description), std::move(type_names_vec)};
+        type_names_vec.erase(type_names_vec.begin());
         this->static_commands[command_name] = detail::Command_s{std::move(func_wrapper), std::move(arg_vec), std::move(caster_vec), std::move(dealloc_vec), std::move(type_names_vec)};
     }
 
