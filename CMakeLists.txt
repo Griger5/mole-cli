@@ -99,4 +99,7 @@ if (BUILD_TESTS)
 
     include(GoogleTest)
     gtest_discover_tests(molecli_tests)
+
+    add_executable(molecli_check_leaks tests/check_leaks.cpp)
+    target_link_libraries(molecli_check_leaks ${PROJECT_NAME})
 endif()

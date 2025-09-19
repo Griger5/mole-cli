@@ -30,6 +30,25 @@ jobs:
        - run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build/ -DNO_DEPS=1
        - run: cmake --build $GITHUB_WORKSPACE/build/
 
+  check_memory_leaks:
+    needs: [debug_builds_ok]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      
+      - name: Configure CMake
+        run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build/ -DBUILD_TESTS=1
+      
+      - name: Build library
+        run: cmake --build $GITHUB_WORKSPACE/build/
+      
+      - name: Run valgrind
+        run: valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all $GITHUB_WORKSPACE/build/molecli_check_leaks 
+
   build_and_test:
     needs: [debug_builds_ok]
     name: Build and test on ${{ matrix.os }}
