@@ -39,6 +39,9 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+
+      - name: Install valgrind
+        run: sudo apt install valgrind
       
       - name: Configure CMake
         run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build/ -DBUILD_TESTS=1
