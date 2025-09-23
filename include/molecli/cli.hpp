@@ -84,6 +84,11 @@ public:
 
     virtual ~CLI();
 
+    template <typename T>
+    void add_command(std::string &&command_name, std::string &&description, T func) {
+        this->add_command(std::move(command_name), std::move(description), std::function{func});
+    }
+
     template <typename ReturnType, typename... ArgTypes>
     void add_command(std::string &&command_name, std::string &&description, std::function<ReturnType(ArgTypes...)> func) {
         Args arg_vec;
