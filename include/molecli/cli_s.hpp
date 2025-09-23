@@ -41,6 +41,11 @@ public:
         }
     }
 
+    template <typename T>
+    void add_command_s(std::string &&command_name, std::string &&description, T func) {
+        this->add_command_s(std::move(command_name), std::move(description), std::function{func});
+    }
+
     template <typename ReturnType, typename... ArgTypes>
     void add_command_s(std::string &&command_name, std::string &&description, std::function<ReturnType(std::shared_ptr<StaticVarsT>, ArgTypes...)> func) {
         Args arg_vec;
