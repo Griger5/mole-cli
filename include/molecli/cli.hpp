@@ -18,9 +18,6 @@
 #include <cxxabi.h>
 #endif
 
-template <typename... Ts>
-class CLI_s;
-
 namespace molecli {
 
 using Args = std::vector<void *>;
