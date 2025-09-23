@@ -39,7 +39,26 @@ protected:
             caster_vec.push_back(detail::cast<First>);
             dealloc_vec.push_back([](std::vector<void*> &v, std::size_t idx) {delete static_cast<First *>(v[idx]);});
 
-            #ifndef _MSC_VER
+            #ifdef _MSC_VER
+                std::string name_str = typeid(First).name();
+                if (name_str == "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >") {
+                    type_names_vec.push_back("std::string");
+                }
+                else {
+                    type_names_vec.push_back(name_str);
+                }
+            #elif defined(__clang__)
+                int status = -1;
+                char *name = abi::__cxa_demangle(typeid(First).name(), 0, 0, &status);
+                std::string name_str{name};
+                if (name_str == "std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>") {
+                    type_names_vec.push_back("std::string");
+                }
+                else {
+                    type_names_vec.push_back(name_str);
+                }
+                free(name);
+            #else
                 int status = -1;
                 char *name = abi::__cxa_demangle(typeid(First).name(), 0, 0, &status);
                 std::string name_str{name};
@@ -50,14 +69,6 @@ protected:
                     type_names_vec.push_back(name_str);
                 }
                 free(name);
-            #else
-                std::string name_str = typeid(First).name();
-                if (name_str == "class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >") {
-                    type_names_vec.push_back("std::string");
-                }
-                else {
-                    type_names_vec.push_back(name_str);
-                }
             #endif
 
             add_command_impl<Idx - 1, Rest...>(arg_vec, caster_vec, dealloc_vec, type_names_vec);
