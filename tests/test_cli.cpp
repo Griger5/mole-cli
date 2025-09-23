@@ -14,7 +14,7 @@ protected:
     std::stringstream output;
 };
 
-std::string test_subject;
+inline std::string test_subject;
 
 void set_test_subject(std::string a) {
     test_subject = a;
