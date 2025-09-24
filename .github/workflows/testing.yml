@@ -100,5 +100,5 @@ jobs:
       - name: Run tests
         run: |
           ctest --test-dir $GITHUB_WORKSPACE/build/ --output-on-failure
-          cd build/
-          ./molecli_tests_scripting
+          ls build/
+          $GITHUB_WORKSPACE/build/molecli_tests_scripting
