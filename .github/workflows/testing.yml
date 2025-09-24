@@ -75,8 +75,9 @@ jobs:
         run: cmake --install $GITHUB_WORKSPACE/build/
       
       - name: Build examples
-        run: cmake -S $GITHUB_WORKSPACE/examples/ -B $GITHUB_WORKSPACE/examples/build/
-        run: cmake --build $GITHUB_WORKSPACE/examples/build/
+        run: | 
+          cmake -S $GITHUB_WORKSPACE/examples/ -B $GITHUB_WORKSPACE/examples/build/
+          cmake --build $GITHUB_WORKSPACE/examples/build/
 
   build_and_test:
     needs: [debug_builds_ok]
