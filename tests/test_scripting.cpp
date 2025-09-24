@@ -32,7 +32,7 @@ int main() {
     CLI main_cli;
     std::shared_ptr<CLI> second_cli = std::make_shared<CLI>();
 
-    std::ifstream input_file{"build/sample_script.txt"};
+    std::ifstream input_file{"sample_script.txt"};
 
     main_cli.add_command("print", "Prints two integers", print);
     second_cli->add_command("print2", "Prints a string", print2);
