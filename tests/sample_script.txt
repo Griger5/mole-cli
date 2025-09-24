@@ -1,0 +1,13 @@
+print 1 3
+print 1 2.1
+print 1
+unknown_cmd
+second_cli
+print2 text
+exit
+static_cli
+echo_static
+set_static 1 15
+echo_static
+exit
+exit

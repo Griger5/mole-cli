@@ -85,6 +85,8 @@ if (BUILD_TESTS)
 
     enable_testing()
 
+    execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copy('../tests/sample_script.txt', './sample_script.txt');")
+
     add_executable(molecli_tests
         tests/test_caster.cpp
         tests/test_cli.cpp
@@ -92,6 +94,7 @@ if (BUILD_TESTS)
         tests/test_command.cpp
         tests/test_command_s.cpp
         tests/test_help_message.cpp
+        tests/test_scripting.cpp
         tests/test_tokenize.cpp
     )
 
