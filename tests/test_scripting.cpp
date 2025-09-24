@@ -1,10 +1,9 @@
-#include <gtest/gtest.h>
-
 #include "../include/molecli/molecli.hpp"
 
 #include <memory>
 #include <sstream>
 #include <fstream>
+#include <cassert>
 
 using namespace molecli;
 
@@ -29,11 +28,11 @@ void set_static_vars(MOLECLI_STATIC_VARS(cli_with_static), int a, double b) {
     GetStaticVar(1) = b;
 }
 
-TEST(ScriptingTest, RunSampleFile) {
+int main() {
     CLI main_cli;
     std::shared_ptr<CLI> second_cli = std::make_shared<CLI>();
 
-    std::ifstream input_file{"sample_script.txt"};
+    std::ifstream input_file{"build/sample_script.txt"};
 
     main_cli.add_command("print", "Prints two integers", print);
     second_cli->add_command("print2", "Prints a string", print2);
@@ -45,7 +44,7 @@ TEST(ScriptingTest, RunSampleFile) {
 
     main_cli.run_loop(input_file, output);
     
-    EXPECT_EQ(output.str(), "1 3\n"
+    assert(output.str() == "1 3\n"
     "Warning: Wrong type of argument #2. Argument type should be: int\n"
     "Warning: Insufficient number of arguments. Expected: 2, received: 1\n"
     "Unknown command. Maybe try using \"help\"?\n"

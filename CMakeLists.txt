@@ -85,7 +85,7 @@ if (BUILD_TESTS)
 
     enable_testing()
 
-    execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copy('../tests/sample_script.txt', './sample_script.txt');")
+    execute_process(COMMAND ${Python3_EXECUTABLE} "-c" "import shutil; shutil.copy('tests/sample_script.txt', 'build/sample_script.txt');")
 
     add_executable(molecli_tests
         tests/test_caster.cpp
@@ -94,13 +94,15 @@ if (BUILD_TESTS)
         tests/test_command.cpp
         tests/test_command_s.cpp
         tests/test_help_message.cpp
-        tests/test_scripting.cpp
         tests/test_tokenize.cpp
     )
+
+    add_executable(molecli_tests_scripting tests/test_scripting.cpp)
 
     target_compile_features(molecli_tests PUBLIC cxx_std_17)
 
     target_link_libraries(molecli_tests ${PROJECT_NAME} GTest::gtest_main)
+    target_link_libraries(molecli_tests_scripting ${PROJECT_NAME})
 
     include(GoogleTest)
     gtest_discover_tests(molecli_tests)
