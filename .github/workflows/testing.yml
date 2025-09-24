@@ -50,7 +50,33 @@ jobs:
         run: cmake --build $GITHUB_WORKSPACE/build/
       
       - name: Run valgrind
-        run: valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all $GITHUB_WORKSPACE/build/molecli_check_leaks 
+        run: valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all $GITHUB_WORKSPACE/build/molecli_check_leaks
+
+  build_examples:
+    needs: [debug_builds_ok]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install valgrind
+        run: sudo apt install valgrind
+      
+      - name: Configure CMake
+        run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build/
+      
+      - name: Build library
+        run: cmake --build $GITHUB_WORKSPACE/build/
+
+      - name: Install library
+        run: cmake --install $GITHUB_WORKSPACE/build/
+      
+      - name: Build examples
+        run: cmake -S $GITHUB_WORKSPACE/examples/ -B $GITHUB_WORKSPACE/examples/build/
+        run: cmake --build $GITHUB_WORKSPACE/examples/build/
 
   build_and_test:
     needs: [debug_builds_ok]
