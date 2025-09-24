@@ -41,7 +41,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install valgrind
-        run: sudo apt install valgrind
+        run: sudo apt update && sudo apt install valgrind
       
       - name: Configure CMake
         run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build/ -DBUILD_TESTS=1
@@ -69,7 +69,7 @@ jobs:
         run: cmake --build $GITHUB_WORKSPACE/build/
 
       - name: Install library
-        run: cmake --install $GITHUB_WORKSPACE/build/
+        run: sudo cmake --install $GITHUB_WORKSPACE/build/
       
       - name: Build examples
         run: | 
