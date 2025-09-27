@@ -12,3 +12,6 @@ target_link_libraries(02_custom_class talpasoft::molecli)
 
 add_executable(03_static_vars 03_static_vars/main.cpp)
 target_link_libraries(03_static_vars talpasoft::molecli)
+
+add_executable(04_multi_cli 04_multi_cli/main.cpp)
+target_link_libraries(04_multi_cli talpasoft::molecli)
