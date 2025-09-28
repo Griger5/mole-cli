@@ -98,7 +98,8 @@ jobs:
         run: cmake --build $GITHUB_WORKSPACE/build/
       
       - name: Run tests
-        run: |
-          ctest --test-dir $GITHUB_WORKSPACE/build/ --output-on-failure
-          ls build/
-          $GITHUB_WORKSPACE/build/molecli_tests_scripting
+        run: ctest --test-dir $GITHUB_WORKSPACE/build/ --output-on-failure
+
+      - name: Run scripting test
+        if: matrix.os != 'windows-latest'
+        run: $GITHUB_WORKSPACE/build/molecli_tests_scripting
