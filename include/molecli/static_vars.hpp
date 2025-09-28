@@ -13,6 +13,10 @@ public:
     constexpr std::tuple_element_t<Idx, std::tuple<StaticTypes...>> &get() {
         return std::get<Idx>(vars);
     }
+
+    std::tuple<StaticTypes...> &get_tuple() {
+        return this->vars;
+    }
 };
 
 } // molecli::detail

@@ -22,4 +22,6 @@ bool molecli::detail::cast<Type>(std::string &&token, void *output) { \
 
 #define GetStaticVar(idx) static_vars->get<idx>()
 
+#define GetStaticVars() static_vars->get_tuple();
+
 #endif // MOLECLI_MOLECLI_HPP
