@@ -84,7 +84,7 @@ TEST_F(CLITests, CorrectHelpOutput) {
     EXPECT_EQ(output.str(), "AVAILABLE COMMANDS:\n"
     "\033[36mset_test\033[39m(std::string)\n    Set a global variable\n--------------------\n"
     "\033[36mhelp\033[39m()/\033[36mHELP\033[39m()\n    Lists all available commands\n--------------------\n"
-    "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exists the current CLI\n--------------------\n");
+    "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exits the current CLI\n--------------------\n");
 }
 
 TEST_F(CLITests, UnknownCommand) {

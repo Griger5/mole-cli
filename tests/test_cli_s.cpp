@@ -104,7 +104,7 @@ TEST_F(CLI_sTests, CorrectHelpOutput) {
     "\033[36massert_static\033[39m(StaticVars, int, float)\n    Assert values of static variables\n--------------------\n"
     "\033[36mset_static\033[39m(StaticVars, int, float)\n    Set static variables\n--------------------\n"
     "\033[36mhelp\033[39m()/\033[36mHELP\033[39m()\n    Lists all available commands\n--------------------\n"
-    "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exists the current CLI\n--------------------\n");
+    "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exits the current CLI\n--------------------\n");
 }
 
 TEST_F(CLI_sTests, UnknownCommand) {
