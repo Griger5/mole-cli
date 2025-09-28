@@ -197,10 +197,24 @@ void use_wrapper(Wrapper wrapper, float a) {...}
 
 int main() {
 	molecli::CLI cli;
-	cli.add_command("use_wrapper", "", use_wrapper);
+	cli.add_command("use_wrapper", "Use Wrapper and a float", use_wrapper);
 	cli.run_loop();
 }
 ```
+`help` command output:
+```
+AVAILABLE COMMANDS:
+use_wrapper(Wrapper, float)
+    Use Wrapper and a float
+--------------------
+help()/HELP()
+    Lists all available commands
+--------------------
+exit()/EXIT()
+    Exits the current CLI
+--------------------
+```
+
 NOTE: *Providing a safe caster is the user's responsibility. You have to take care of all errors or crashes that may arise - the library only handles receiving* `std::nullopt` *as the "error" value*
 
 ## Static variables
