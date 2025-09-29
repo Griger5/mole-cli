@@ -175,3 +175,15 @@ TEST_F(CLITests, WrongTypeOfArg) {
 
     EXPECT_EQ(output.str(), "Warning: Wrong type of argument #1. Argument type should be: int\n");
 }
+
+TEST_F(CLITests, AddSubCLI) {
+    std::shared_ptr<CLI> sub_cli = std::make_shared<CLI>();
+
+    sub_cli->add_command("set_test", "", set_test_subject);
+    cli.add_sub_cli("sub_cli", "", sub_cli);
+
+    input << "sub_cli\n" << "set_test SubCLI\n" << "exit\n" << "exit\n";
+    cli.run_loop(input, output);
+
+    EXPECT_EQ(test_subject, "SubCLI");
+}
