@@ -94,12 +94,12 @@ public:
     virtual ~CLI();
 
     template <typename T>
-    void add_command(std::string &&command_name, std::string &&description, T func) {
-        this->add_command(std::move(command_name), std::move(description), std::function{func});
+    void add_command(std::string &&command_name, std::string &&description, T func, bool is_private = false) {
+        this->add_command(std::move(command_name), std::move(description), std::function{func}, is_private);
     }
 
     template <typename ReturnType, typename... ArgTypes>
-    void add_command(std::string &&command_name, std::string &&description, std::function<ReturnType(ArgTypes...)> func) {
+    void add_command(std::string &&command_name, std::string &&description, std::function<ReturnType(ArgTypes...)> func, bool is_private = false) {
         Args arg_vec;
         std::vector<Caster> caster_vec;
         std::vector<DeallocFunc> dealloc_vec;
@@ -114,7 +114,9 @@ public:
             std::apply(func, t);
         };
 
-        this->help_messages[command_name] = detail::HelpMessage{std::move(command_name), std::move(description), std::move(type_names_vec)};
+        if (!is_private) {
+            this->help_messages[command_name] = detail::HelpMessage{std::move(command_name), std::move(description), std::move(type_names_vec)};
+        }
         this->commands[command_name] = detail::Command{std::move(func_wrapper), std::move(arg_vec), std::move(caster_vec), std::move(dealloc_vec), std::move(type_names_vec)};
     }
 

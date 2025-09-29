@@ -42,12 +42,12 @@ public:
     }
 
     template <typename T>
-    void add_command_s(std::string &&command_name, std::string &&description, T func) {
-        this->add_command_s(std::move(command_name), std::move(description), std::function{func});
+    void add_command_s(std::string &&command_name, std::string &&description, T func, bool is_private = false) {
+        this->add_command_s(std::move(command_name), std::move(description), std::function{func}, is_private);
     }
 
     template <typename ReturnType, typename... ArgTypes>
-    void add_command_s(std::string &&command_name, std::string &&description, std::function<ReturnType(std::shared_ptr<StaticVarsT>, ArgTypes...)> func) {
+    void add_command_s(std::string &&command_name, std::string &&description, std::function<ReturnType(std::shared_ptr<StaticVarsT>, ArgTypes...)> func, bool is_private = false) {
         Args arg_vec;
         std::vector<Caster> caster_vec;
         std::vector<DeallocFunc> dealloc_vec;
@@ -66,7 +66,9 @@ public:
             std::apply(func, t2);
         };
 
-        this->help_messages[command_name] = detail::HelpMessage{std::move(command_name), std::move(description), std::move(type_names_vec)};
+        if (!is_private) {
+            this->help_messages[command_name] = detail::HelpMessage{std::move(command_name), std::move(description), std::move(type_names_vec)};
+        }
         type_names_vec.erase(type_names_vec.begin());
         this->static_commands[command_name] = detail::Command_s{std::move(func_wrapper), std::move(arg_vec), std::move(caster_vec), std::move(dealloc_vec), std::move(type_names_vec)};
     }
