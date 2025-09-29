@@ -39,8 +39,8 @@ int main() {
     cli_with_static->add_command_s("echo_static", "Echo static variables", echo_static_vars);
     cli_with_static->add_command_s("set_static", "Set static variables", set_static_vars);
 
-    main_cli.add_sub_cli("second_cli", second_cli);
-    main_cli.add_sub_cli("static_cli", cli_with_static);
+    main_cli.add_sub_cli("second_cli", "", second_cli);
+    main_cli.add_sub_cli("static_cli", "", cli_with_static);
 
     main_cli.run_loop(input_file, output);
     

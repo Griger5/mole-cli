@@ -50,8 +50,8 @@ int main() {
     cli_with_static->add_command_s("echo_static_vars", "Description", std::function{echo_static_vars});
     cli_with_static->add_command_s("set_static_vars", "Description", std::function{set_static_vars});
 
-    main_cli.add_sub_cli("second_cli", second_cli);
-    main_cli.add_sub_cli("cli_with_static", cli_with_static);
+    main_cli.add_sub_cli("second_cli", "", second_cli);
+    main_cli.add_sub_cli("cli_with_static", "", cli_with_static);
 
     std::stringstream instructions;
     

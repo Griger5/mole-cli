@@ -30,6 +30,7 @@ protected:
     std::map<std::string, detail::Command> commands;
     std::map<std::string, detail::HelpMessage> help_messages;
     std::map<std::string, std::shared_ptr<CLI>> sub_cli;
+    std::map<std::string, detail::HelpMessage> help_messages_cli;
     bool is_main = true;
 
     template <std::size_t Idx, typename First = void, typename... Rest>
@@ -117,7 +118,7 @@ public:
         this->commands[command_name] = detail::Command{std::move(func_wrapper), std::move(arg_vec), std::move(caster_vec), std::move(dealloc_vec), std::move(type_names_vec)};
     }
 
-    void add_sub_cli(std::string &&cli_name, std::shared_ptr<CLI> cli_ptr);
+    void add_sub_cli(std::string &&cli_name, std::string &&description, std::shared_ptr<CLI> cli_ptr, bool is_private = false);
 
     virtual void run_loop(std::istream &i_stream = std::cin, std::ostream &o_stream = std::cout);
 };

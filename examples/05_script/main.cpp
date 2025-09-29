@@ -30,8 +30,8 @@ int main() {
         GetStaticVar(1) = b;
     });
 
-    main_cli.add_sub_cli("second_cli", second_cli);
-    main_cli.add_sub_cli("static_cli", cli_with_static);
+    main_cli.add_sub_cli("second_cli", "Second CLI", second_cli);
+    main_cli.add_sub_cli("static_cli", "CLI with static variables", cli_with_static);
 
     main_cli.run_loop(input_file);
 }

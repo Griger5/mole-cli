@@ -12,9 +12,13 @@ CLI::~CLI() {
     }
 }
 
-void CLI::add_sub_cli(std::string &&cli_name, std::shared_ptr<CLI> cli_ptr) {
+void CLI::add_sub_cli(std::string &&cli_name, std::string &&description, std::shared_ptr<CLI> cli_ptr, bool is_private) {
     cli_ptr->is_main = false;
     this->sub_cli[cli_name] = cli_ptr;
+    
+    if (!is_private) {
+        this->help_messages_cli[cli_name] = detail::HelpMessage{std::move(cli_name), std::move(description), {}};
+    }
 }
 
 void CLI::run_loop(std::istream &i_stream, std::ostream &o_stream) {
@@ -89,6 +93,14 @@ void CLI::run_loop(std::istream &i_stream, std::ostream &o_stream) {
 
             o_stream << "\033[36mhelp\033[39m()/\033[36mHELP\033[39m()\n    Lists all available commands\n--------------------\n";
             o_stream << "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exits the current CLI\n--------------------\n";
+
+            if (!this->help_messages_cli.empty()) {
+                o_stream << "AVAILABLE CLIs:\n";
+
+                for (auto &[name, msg] : this->help_messages_cli) {
+                    o_stream << msg;
+                }
+            }
         }
         else {
             o_stream << "Unknown command. Maybe try using \"help\"?\n";

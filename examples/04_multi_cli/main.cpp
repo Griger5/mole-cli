@@ -22,8 +22,8 @@ int main() {
         std::cout << GetStaticVar(0) << '\n';
     });
 
-    main_cli.add_sub_cli("device1", device1);
-    main_cli.add_sub_cli("device2", device2);
+    main_cli.add_sub_cli("device1", "CLI for device1", device1);
+    main_cli.add_sub_cli("device2", "CLI for device2", device2);
 
     main_cli.run_loop();
 }
