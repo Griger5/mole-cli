@@ -75,7 +75,62 @@ TEST_F(CLITests, AcceptsLambda) {
     EXPECT_EQ(test_subject, "Lambda");
 }
 
-TEST_F(CLITests, CorrectHelpOutput) {
+TEST_F(CLITests, CorrectHelpOutputWithAll) {
+    std::shared_ptr<CLI> second_cli = std::make_shared<CLI>();
+
+    cli.add_command("set_test", "Set a global variable", set_test_subject);
+    cli.add_sub_cli("second_cli", "Enter a nested CLI", second_cli);
+
+    input << "help\nexit\n";
+    cli.run_loop(input, output);
+
+    EXPECT_EQ(output.str(), "AVAILABLE COMMANDS:\n"
+    "\033[36mset_test\033[39m(std::string)\n    Set a global variable\n--------------------\n"
+    "\033[36mhelp\033[39m()/\033[36mHELP\033[39m()\n    Lists all available commands\n--------------------\n"
+    "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exits the current CLI\n--------------------\n"
+    "AVAILABLE CLIs:\n"
+    "\033[36msecond_cli\033[39m()\n    Enter a nested CLI\n--------------------\n");
+}
+
+TEST_F(CLITests, CorrectHelpOutputPrivateCommand) {
+    std::shared_ptr<CLI> second_cli = std::make_shared<CLI>();
+    std::shared_ptr<CLI> third_cli = std::make_shared<CLI>();
+
+    cli.add_command("set_test", "Set a global variable", set_test_subject, true);
+    cli.add_sub_cli("second_cli", "Enter a nested CLI", second_cli);
+    cli.add_sub_cli("third_cli", "Enter another nested CLI", third_cli);
+
+    input << "help\nexit\n";
+    cli.run_loop(input, output);
+
+    EXPECT_EQ(output.str(), "AVAILABLE COMMANDS:\n"
+    "\033[36mhelp\033[39m()/\033[36mHELP\033[39m()\n    Lists all available commands\n--------------------\n"
+    "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exits the current CLI\n--------------------\n"
+    "AVAILABLE CLIs:\n"
+    "\033[36msecond_cli\033[39m()\n    Enter a nested CLI\n--------------------\n"
+    "\033[36mthird_cli\033[39m()\n    Enter another nested CLI\n--------------------\n");
+}
+
+TEST_F(CLITests, CorrectHelpOutputPrivateCLI) {
+    std::shared_ptr<CLI> second_cli = std::make_shared<CLI>();
+    std::shared_ptr<CLI> third_cli = std::make_shared<CLI>();
+
+    cli.add_command("set_test", "Set a global variable", set_test_subject);
+    cli.add_sub_cli("second_cli", "Enter a nested CLI", second_cli, true);
+    cli.add_sub_cli("third_cli", "Enter another nested CLI", third_cli);
+
+    input << "help\nexit\n";
+    cli.run_loop(input, output);
+
+    EXPECT_EQ(output.str(), "AVAILABLE COMMANDS:\n"
+    "\033[36mset_test\033[39m(std::string)\n    Set a global variable\n--------------------\n"
+    "\033[36mhelp\033[39m()/\033[36mHELP\033[39m()\n    Lists all available commands\n--------------------\n"
+    "\033[36mexit\033[39m()/\033[36mEXIT\033[39m()\n    Exits the current CLI\n--------------------\n"
+    "AVAILABLE CLIs:\n"
+    "\033[36mthird_cli\033[39m()\n    Enter another nested CLI\n--------------------\n");
+}
+
+TEST_F(CLITests, CorrectHelpOutputNoCLI) {
     cli.add_command("set_test", "Set a global variable", set_test_subject);
 
     input << "help\nexit\n";

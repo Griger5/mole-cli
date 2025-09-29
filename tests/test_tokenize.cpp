@@ -28,3 +28,13 @@ TEST(TokenizeTests, RegularCall) {
     EXPECT_EQ(arguments[1], "arg1");
     EXPECT_EQ(arguments[2], "arg2");
 }
+
+TEST(TokenizeTests, QuotedString) {
+    auto [cmd_name, arguments] = tokenize("cmd_name \"arg0 arg1\" arg2");
+
+    EXPECT_EQ(cmd_name, "cmd_name");
+    ASSERT_EQ(arguments.size(), 2);
+
+    EXPECT_EQ(arguments[0], "arg0 arg1");
+    EXPECT_EQ(arguments[1], "arg2");
+}
