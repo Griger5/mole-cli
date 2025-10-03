@@ -1,5 +1,5 @@
 # mole-cli
-**mole-cli** is a cross-platform C++17 library for building command line interfaces. This library aims for easy installation, easy use, and quick integration with already existing projects. It has been tested on Linux, Windows and macOS through the use of *Github Actions*.
+**mole-cli** is a cross-platform C++17 library for building command line interfaces. This library aims for easy installation, easy use, and quick integration with already existing projects. It has been tested on Linux, Linux-ARM, Windows and macOS through the use of *Github Actions*.
 
 CLIs created by this library will give ample warnings if there is a wrong number of arguments passed to a command, or if the argument types do not match. Basic types are supported out-of-the-box (bool, int, float, double, char, string), and support for other types (user-defined included) can be easily added.
 
@@ -10,7 +10,7 @@ The project heavily relies on template metaprogramming and some macros for flexi
 [GoogleTest](https://github.com/google/googletest) library was used to provide unit-testing for all of the classes.
 
 ![License](https://img.shields.io/badge/License-MIT-blue.svg) ![Github Actions](https://img.shields.io/github/actions/workflow/status/Griger5/mole-cli/testing.yml) 
-![C++](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B) ![](https://img.shields.io/badge/CMake-064F8C?style=flat&logo=cmake&logoColor=fff) [![Linux OK](https://img.shields.io/static/v1?label=Linux&logo=Linux&color=yellow&message=%E2%9C%93)](https://en.wikipedia.org/wiki/Linux) [![macOS OK](https://img.shields.io/static/v1?label=macOS&logo=Apple&color=silver&message=%E2%9C%93)](https://en.wikipedia.org/wiki/macOS) [![Windows OK](https://img.shields.io/static/v1?label=Windows&logo=Windows&color=blue&message=%E2%9C%93)](https://en.wikipedia.org/wiki/Windows)
+![C++](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B) ![](https://img.shields.io/badge/CMake-064F8C?style=flat&logo=cmake&logoColor=fff) [![Linux OK](https://img.shields.io/static/v1?label=Linux&logo=Linux&color=yellow&message=%E2%9C%93)](https://en.wikipedia.org/wiki/Linux) [![Linux-ARM OK](https://img.shields.io/static/v1?label=Linux-ARM&logo=Linux&color=yellow&message=%E2%9C%93)](https://en.wikipedia.org/wiki/Linux) [![macOS OK](https://img.shields.io/static/v1?label=macOS&logo=Apple&color=silver&message=%E2%9C%93)](https://en.wikipedia.org/wiki/macOS) [![Windows OK](https://img.shields.io/static/v1?label=Windows&logo=Windows&color=blue&message=%E2%9C%93)](https://en.wikipedia.org/wiki/Windows)
 
 ## Contents
 1. [Requirements](#requirements)
@@ -50,7 +50,7 @@ If you don't want to use the dependency:
 ```bash
 cmake -S . -B build/ -DNO_DEPS=1
 ```
-NOTE: *Without the* `isocline` *library* you will lose the "quality of life" features like history or shortcuts.
+NOTE: *Without the* `isocline` *library you will lose the "quality of life" features like history or shortcuts.*
 
 3. Build and install the library:
 ```bash
